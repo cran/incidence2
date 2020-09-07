@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Tim Taylor" />
+
+
+<title>Handling incidence objects</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Handling incidence objects</h1>
+<h4 class="author">Tim Taylor</h4>
+
+
+
+<p>We try to make <code>incidence()</code> objects easy to work with providing helper functions for both manipulating and accessing data within the objects, and integration with <a href="https://www.tidyverse.org/">tidyverse</a> verbs.</p>
+<div id="modifying-incidence-objects" class="section level1">
+<h1>Modifying incidence objects</h1>
+<div id="regroup" class="section level2">
+<h2>regroup</h2>
+<p>Sometimes you may find you’ve created a grouped <code>incidence()</code> but now want to change the internal grouping. Assuming you are after a subset of the grouping already generated, then you can use to <code>regroup()</code> function to get the desired aggregation:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(outbreaks)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(incidence2)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># load data</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>dat &lt;-<span class="st"> </span>ebola_sim_clean<span class="op">$</span>linelist</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># generate the incidence object with 3 groups</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>inci &lt;-<span class="st"> </span><span class="kw">incidence</span>(dat, <span class="dt">date_index =</span> date_of_onset,</span>
+<span id="cb1-9"><a href="#cb1-9"></a>                  <span class="dt">groups =</span> <span class="kw">c</span>(gender, hospital, outcome),</span>
+<span id="cb1-10"><a href="#cb1-10"></a>                  <span class="dt">interval =</span> <span class="st">&quot;1 week&quot;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11"></a>inci</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; An incidence2 object: 2,016 x 6</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; </span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt;    bin_date   week_group gender hospital                           outcome count</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;                              &lt;fct&gt;   &lt;int&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Military Hospital                  &lt;NA&gt;        1</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   m      Military Hospital                  &lt;NA&gt;        0</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      Connaught Hospital                 &lt;NA&gt;        0</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Connaught Hospital                 &lt;NA&gt;        0</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   f      other                              &lt;NA&gt;        0</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      other                              &lt;NA&gt;        0</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt;  7 2014-04-07 2014-W15   f      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt;  8 2014-04-07 2014-W15   m      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt;  9 2014-04-07 2014-W15   f      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt; 10 2014-04-07 2014-W15   m      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt; # … with 2,006 more rows</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a></span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co"># regroup to just two groups</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>(<span class="kw">c</span>(gender, outcome))</span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt; An incidence2 object: 336 x 5</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a><span class="co">#&gt; </span></span>
+<span id="cb1-38"><a href="#cb1-38"></a><span class="co">#&gt;    bin_date   week_group gender outcome count</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;   &lt;int&gt;</span></span>
+<span id="cb1-40"><a href="#cb1-40"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Death       0</span></span>
+<span id="cb1-41"><a href="#cb1-41"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   f      Recover     0</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      &lt;NA&gt;        1</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Death       0</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   m      Recover     0</span></span>
+<span id="cb1-45"><a href="#cb1-45"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      &lt;NA&gt;        0</span></span>
+<span id="cb1-46"><a href="#cb1-46"></a><span class="co">#&gt;  7 2014-04-14 2014-W16   f      Death       0</span></span>
+<span id="cb1-47"><a href="#cb1-47"></a><span class="co">#&gt;  8 2014-04-14 2014-W16   f      Recover     0</span></span>
+<span id="cb1-48"><a href="#cb1-48"></a><span class="co">#&gt;  9 2014-04-14 2014-W16   f      &lt;NA&gt;        0</span></span>
+<span id="cb1-49"><a href="#cb1-49"></a><span class="co">#&gt; 10 2014-04-14 2014-W16   m      Death       0</span></span>
+<span id="cb1-50"><a href="#cb1-50"></a><span class="co">#&gt; # … with 326 more rows</span></span>
+<span id="cb1-51"><a href="#cb1-51"></a></span>
+<span id="cb1-52"><a href="#cb1-52"></a><span class="co"># drop all groups</span></span>
+<span id="cb1-53"><a href="#cb1-53"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>()</span>
+<span id="cb1-54"><a href="#cb1-54"></a><span class="co">#&gt; An incidence2 object: 56 x 3</span></span>
+<span id="cb1-55"><a href="#cb1-55"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-56"><a href="#cb1-56"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-57"><a href="#cb1-57"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-58"><a href="#cb1-58"></a><span class="co">#&gt; </span></span>
+<span id="cb1-59"><a href="#cb1-59"></a><span class="co">#&gt;    bin_date   week_group count</span></span>
+<span id="cb1-60"><a href="#cb1-60"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;int&gt;</span></span>
+<span id="cb1-61"><a href="#cb1-61"></a><span class="co">#&gt;  1 2014-04-07 2014-W15       1</span></span>
+<span id="cb1-62"><a href="#cb1-62"></a><span class="co">#&gt;  2 2014-04-14 2014-W16       1</span></span>
+<span id="cb1-63"><a href="#cb1-63"></a><span class="co">#&gt;  3 2014-04-21 2014-W17       5</span></span>
+<span id="cb1-64"><a href="#cb1-64"></a><span class="co">#&gt;  4 2014-04-28 2014-W18       4</span></span>
+<span id="cb1-65"><a href="#cb1-65"></a><span class="co">#&gt;  5 2014-05-05 2014-W19      12</span></span>
+<span id="cb1-66"><a href="#cb1-66"></a><span class="co">#&gt;  6 2014-05-12 2014-W20      17</span></span>
+<span id="cb1-67"><a href="#cb1-67"></a><span class="co">#&gt;  7 2014-05-19 2014-W21      15</span></span>
+<span id="cb1-68"><a href="#cb1-68"></a><span class="co">#&gt;  8 2014-05-26 2014-W22      19</span></span>
+<span id="cb1-69"><a href="#cb1-69"></a><span class="co">#&gt;  9 2014-06-02 2014-W23      23</span></span>
+<span id="cb1-70"><a href="#cb1-70"></a><span class="co">#&gt; 10 2014-06-09 2014-W24      21</span></span>
+<span id="cb1-71"><a href="#cb1-71"></a><span class="co">#&gt; # … with 46 more rows</span></span></code></pre></div>
+</div>
+<div id="cumulate" class="section level2">
+<h2>cumulate</h2>
+<p>We also provide a helper function, <code>cumulate</code>() to easily generate cumulative incidences:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>inci <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">cumulate</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="st">  </span><span class="kw">facet_plot</span>(<span class="dt">facet =</span> hospital)</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; plot() can only stack/dodge by one variable.</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; For multi-facet plotting try facet_plot()</span></span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAIAAAD17khjAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nOzdeXxTVf4//pO96UJL6QJiZZMdocCnLYoUqqMiWIYiLgOKQ8fCF1EoA0oFWqwwKrKMxQ3049IRFBTEcXlIkc2qCI6DVOiwySJYsNBi2yTNcrffH+fn/WSSmyZt70mb8Ho+fPhITi/ve3LOyXnfe3MXjSRJBAAAAMKLtq0rAAAAAOpDggcAAAhDSPAAAABhCAkeAAAgDCHBAwAAhCEkeAAAgDCkb+sKtMSXX365bdu2tq4FhIkVK1aYTCaPwrfeequioqJN6gNhpmPHjkuXLvUuf/bZZ6urq4NfHwg//fr1+3//7/95l4dkgj979mxWVlb//v3buiIQ8l588UVBELzLKysrH3rooaioqOBXCcLMypUrFcvPnDmzYMGCIFcGwo8oimvXrlX8Ew7RAwAAhCEkeAAAgDCEBA8AABCGkOABAADCEBI8AABAGEKCBwAACENI8K0lSdLWrVtzc3PvvPPOP//5z2VlZW1bn1OnTs2ePdujUBTFp556yr2E47isrCybzSaXrFu3bt26da1Z9ZEjR/Lz8xVX5+7EiRPeNYSWqa6uzsrKevXVV90L582bN3HiROLWI3KbB9hHAcIoAhXJPa44iUELIMG31jvvvLNr166ioqJPP/30r3/96+uvv/7999+3daU8SZL07bffsl5Ljx495s6dG7TVAWUymb7++mv5bX19/cmTJ+lruUdkze0jnudVrax/GEVXrdb0ePAHakgIyRvdtB/19fUffPDBm2++mZiYSAgZPHjw9OnTf/zxx//5n//ZuXPn22+/7XA40tLS5s6dGxERcerUqRdffDEmJubYsWNdu3Z99NFHr7/+esVCQsi777778ccf22y2Xr16FRUVxcfHHzp0aMOGDatWrSKEfPnll998882iRYsIIWVlZW+99ZbJZEpPT6+vr7/vvvsEQXjxxRf379+fmJhIAy5dupTjuFmzZnns6inyrrkgCKtWrdq/f79Wq50yZcrdd99dVlb27bffnjt37vLly/379y8oKIiPjz937tz69etfeOEF99V5fxDGfXLViYqKSkhIOHnyZO/evQkh+/btS0tL++GHHwghco/ICwfYRydOnHjrrbe6du169uzZxMTE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v3rxxRenTp2an5//008/EUJOnDjx5JNPvvTSSwUFBefOnSspKVEMvnTpUo7jZs2aJS9DCHn33Xfvv//+7Ozs/Pz8K1euEEJOnTqVn59fWFh4zz33yKtwFxUVlZCQICf1ffv2paWlyX/1CCiv1LtBPGquuF65qnKcFStWfPLJJ3Rdq1at8mg3X3bu3PnAAw9Mnjx5xYoV9G7H3u1TVlb21FNP5ebmZmdnP/HEE7Q1vCug2GiKNm3adOedd3oURkRE5OTkcBx34cIFxV6uqakJ5BO1f3FxcRkZGZcvXyZK7S+rrKy87777qqqqDh06tGDBAloo798rdgoJuAs8tMkwgNAVHR09cuTIN954w/tPe/bsGTt27M0339zmt1kLLX4S/PXXX/+f//znr3/9a0RExNdff71ly5Zvvvlm0aJFwamcL7/++usnn3yyZs2a1157bf/+/YcOHfrtt9+Ki4sLCws3btwoSdLLL7+8Z88eepOyNWvWvP766w6Hw7tEDnjy5Mnu3bsnJibKJePHj8/NzSWEHD9+fODAgRs2bOjevfsHH3xA//rDDz9069bN/YY/3sGLi4sNBoP70fVffvll48aNJSUl27Zti4+P//zzz2l5RUXF6NGj33///euvv37z5s3enzczM1O+G8FXX301atQoXwHllXo3iHfNm1ivHGfEiBEHDhwgv+9L3XzzzX57p6qq6pVXXnn22Wc3b95st9vpPbwUG/+rr76aNWvWRx99dN1113ncqEGugK9G81ZeXu597yOXy/Xxxx/r9fouXboo9vKAAQP8fqKQcP78+YMHD6alpSm2P1VVVfX0008vXbq0a9euvuJ4d0rgXeCurYYBhLS8vLzy8vITJ064FwqC8PXXX996661jxoxBgm8W5QR/4L999913Bw4cqKysTEpK0ul0dMZvQ5WVlSNGjEhKSurYseOiRYs6deq0b9++YcOG9ejRQ6fT5eTk7N27Ny4urr6+/vTp09ddd9327dsjIiK8S+SAv/76a3x8vOK6IiMjR48erdFobrzxxsbGRloYExOTnZ3tfh/TJoLLunTpsmnTpuTkZIvFotFo5GhmszkrK0uj0WRkZLj/lim7+eabaYK32+2nT58eOHBg0wEJId4N4l1zv+slhAwfPryiokIQhKNHjyYkJCQnJ3sskJOTc8fvtmzZQgj55ptvxowZk5KSotPppk6dSn9fUGyfwYMHp6Wl6XS66dOn79u3j57tEWCjebDZbPX19e6dOGPGjHHjxo0fP/6DDz548skno6Ojm+jl0DVr1qxx48bdeeed06ZNGz58eHp6umL7E0Lq6uqeeOKJW265peltGu9OCaQL2skwgFAXExPz8MMP//3vf3cfBv/+97979OiRmJj4P//zPzhK3yzKZ9GPGDGi6X/Wto+LbWho6N27N33dp08fQsiXX3555MiRvLw8WpiUlDR06NCsrKzi4mKO4+66667c3FzvEjlgYmKix0G/K1euHDp0qFu3btdddx1Nh1rt/20MJSQkeFSpieDuSktLy8vLExMTtVpt586daSGdBAkhvu58npycbDKZzp07d+bMmfT0dPfFFAMSQmpqajwaxLvmftdLCImOju7Zs+fhw4e///57xd33bdu2yfdzpadW1dbWyqtLTk6ura311T7yYlFRUSaTqa6uLvBG81BfX+++a04Iee2111JSUtxLFHv5l19+8fXZQ8Krr77ao0cPQsjJkycXLlyYlZWl2P6EkO+//37SpEllZWXTpk0zm83uQdyfCu3dKbGxsX67oJ0MAwgDY8eO/eyzzz777DO5ZM+ePUePHr377rsJIXa7fe/evQ8++GDbVTCUKCd4XydhtRPR0dENDQ309aFDhwRB6Nix45gxYx577DFCiMPhOHfu3JUrVyZNmpSbm/vTTz8VFRXddNNNnTp18ijp168fDdK7d+9Tp05dunRJnmt27tx58ODBvLw897wu8y70Xp28CSLbtWvX8ePH33zzzejo6E2bNlksFlruPr36MmrUqPLy8rNnz95xxx1+AxJCvBvEu+aBrJcQkpGRQQ/kFBYWBrJ8fHy8fOZaTU0N3Wn2bh9CSHV1NV2sqqrKbrfHxsbKJYF8RncdOnSgPz83QbGX5ZYJdb17905NTT179qxi+xNCRo0a9eijj1ZVVW3atGn69OmEEHknyb0RvDslwC7w0CbDAMKARqOZN2/eggULxo4dSwjhef7rr7/esGFDp06dCCH79u174403kOADpHyIXvc7qw9BrqWH/v3779+//8qVKw0NDWvXrrXZbBkZGXv37j1z5gzP86+++upHH31UVla2atUqi8XSuXNnrVbrcDi8S+SA8fHxOTk5S5cuPXPmjCAIBw8efOedd/74xz8GXiXF4IIguB9o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" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tidyverse-compatibility" class="section level2">
+<h2>Tidyverse compatibility</h2>
+<p>incidence2 has been written with <em>tidyverse</em> compatibility (in particular <a href="https://dplyr.tidyverse.org/">dplyr</a>) at the forefront of the design choices we have made. By this we mean that if an operation from dplyr is applied to an <code>incidence()</code> object then as long as the invariants of the object are preserved (i.e. groups, interval and uniqueness of rows) then the object returned will be an <code>incidence()</code> object. If the invariants are not preserved then a tibble will be returned instead. Some examples of these behaviours are given below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;     filter, lag</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co"># create incidence object</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>inci &lt;-</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="st">  </span>dat <span class="op">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="st">  </span><span class="kw">incidence</span>(</span>
+<span id="cb3-15"><a href="#cb3-15"></a>    <span class="dt">date_index =</span> date_of_onset,</span>
+<span id="cb3-16"><a href="#cb3-16"></a>    <span class="dt">interval =</span> <span class="st">&quot;2 weeks&quot;</span>,</span>
+<span id="cb3-17"><a href="#cb3-17"></a>    <span class="dt">first_date =</span> <span class="st">&quot;2014-05-20&quot;</span>,</span>
+<span id="cb3-18"><a href="#cb3-18"></a>    <span class="dt">last_date =</span> <span class="st">&quot;2014-06-10&quot;</span>,</span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="dt">groups =</span> <span class="kw">c</span>(hospital, gender)</span>
+<span id="cb3-20"><a href="#cb3-20"></a>  )</span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="co">#&gt; 5766 observations outside of [2014-05-20, 2014-06-10] were removed.</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="co"># filtering preserves class</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a>x &lt;-</span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a><span class="st">    </span><span class="kw">filter</span>(gender <span class="op">==</span><span class="st"> &quot;f&quot;</span>, hospital <span class="op">==</span><span class="st"> &quot;Rokupa Hospital&quot;</span>)</span>
+<span id="cb3-27"><a href="#cb3-27"></a>x</span>
+<span id="cb3-28"><a href="#cb3-28"></a><span class="co">#&gt; An incidence2 object: 2 x 5</span></span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="co">#&gt; [2 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-32"><a href="#cb3-32"></a><span class="co">#&gt; </span></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="co">#&gt;   bin_date   week_group hospital        gender count</span></span>
+<span id="cb3-34"><a href="#cb3-34"></a><span class="co">#&gt;   &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;           &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a><span class="co">#&gt; 1 2014-05-19 2014-W21   Rokupa Hospital f          1</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a><span class="co">#&gt; 2 2014-06-02 2014-W23   Rokupa Hospital f          1</span></span>
+<span id="cb3-37"><a href="#cb3-37"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-38"><a href="#cb3-38"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-39"><a href="#cb3-39"></a></span>
+<span id="cb3-40"><a href="#cb3-40"></a><span class="co"># slice operations preserve class</span></span>
+<span id="cb3-41"><a href="#cb3-41"></a>x &lt;-</span>
+<span id="cb3-42"><a href="#cb3-42"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-43"><a href="#cb3-43"></a><span class="st">    </span><span class="kw">slice_sample</span>(<span class="dt">n =</span> <span class="dv">10</span>)</span>
+<span id="cb3-44"><a href="#cb3-44"></a>x</span>
+<span id="cb3-45"><a href="#cb3-45"></a><span class="co">#&gt; An incidence2 object: 10 x 5</span></span>
+<span id="cb3-46"><a href="#cb3-46"></a><span class="co">#&gt; [26 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-47"><a href="#cb3-47"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-48"><a href="#cb3-48"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-49"><a href="#cb3-49"></a><span class="co">#&gt; </span></span>
+<span id="cb3-50"><a href="#cb3-50"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-52"><a href="#cb3-52"></a><span class="co">#&gt;  1 2014-06-02 2014-W23   &lt;NA&gt;                                       f          8</span></span>
+<span id="cb3-53"><a href="#cb3-53"></a><span class="co">#&gt;  2 2014-06-02 2014-W23   other                                      m          2</span></span>
+<span id="cb3-54"><a href="#cb3-54"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                                      m          3</span></span>
+<span id="cb3-55"><a href="#cb3-55"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Rokupa Hospital                            m          1</span></span>
+<span id="cb3-56"><a href="#cb3-56"></a><span class="co">#&gt;  5 2014-06-02 2014-W23   Princess Christian Maternity Hospital (PC… f          0</span></span>
+<span id="cb3-57"><a href="#cb3-57"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   Military Hospital                          m          2</span></span>
+<span id="cb3-58"><a href="#cb3-58"></a><span class="co">#&gt;  7 2014-06-02 2014-W23   Rokupa Hospital                            f          1</span></span>
+<span id="cb3-59"><a href="#cb3-59"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital                          f          2</span></span>
+<span id="cb3-60"><a href="#cb3-60"></a><span class="co">#&gt;  9 2014-06-02 2014-W23   other                                      f          3</span></span>
+<span id="cb3-61"><a href="#cb3-61"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Connaught Hospital                         f          4</span></span>
+<span id="cb3-62"><a href="#cb3-62"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-63"><a href="#cb3-63"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-64"><a href="#cb3-64"></a></span>
+<span id="cb3-65"><a href="#cb3-65"></a>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-66"><a href="#cb3-66"></a><span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-67"><a href="#cb3-67"></a><span class="st">  </span><span class="kw">class</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-68"><a href="#cb3-68"></a><span class="st">  </span><span class="kw">identical</span>(<span class="kw">class</span>(inci))</span>
+<span id="cb3-69"><a href="#cb3-69"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-70"><a href="#cb3-70"></a></span>
+<span id="cb3-71"><a href="#cb3-71"></a><span class="co"># mutate preserve class</span></span>
+<span id="cb3-72"><a href="#cb3-72"></a>x &lt;-</span>
+<span id="cb3-73"><a href="#cb3-73"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-74"><a href="#cb3-74"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">future =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">999</span>)</span>
+<span id="cb3-75"><a href="#cb3-75"></a>x</span>
+<span id="cb3-76"><a href="#cb3-76"></a><span class="co">#&gt; An incidence2 object: 24 x 6</span></span>
+<span id="cb3-77"><a href="#cb3-77"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-78"><a href="#cb3-78"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-79"><a href="#cb3-79"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-80"><a href="#cb3-80"></a><span class="co">#&gt; </span></span>
+<span id="cb3-81"><a href="#cb3-81"></a><span class="co">#&gt;    bin_date   week_group hospital                        gender count future    </span></span>
+<span id="cb3-82"><a href="#cb3-82"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                           &lt;fct&gt;  &lt;int&gt; &lt;date&gt;    </span></span>
+<span id="cb3-83"><a href="#cb3-83"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital              f          4 2017-02-11</span></span>
+<span id="cb3-84"><a href="#cb3-84"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital               f          2 2017-02-11</span></span>
+<span id="cb3-85"><a href="#cb3-85"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                           f          1 2017-02-11</span></span>
+<span id="cb3-86"><a href="#cb3-86"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity H… f          3 2017-02-11</span></span>
+<span id="cb3-87"><a href="#cb3-87"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                 f          1 2017-02-11</span></span>
+<span id="cb3-88"><a href="#cb3-88"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                            f          4 2017-02-11</span></span>
+<span id="cb3-89"><a href="#cb3-89"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital              m          4 2017-02-11</span></span>
+<span id="cb3-90"><a href="#cb3-90"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital               m          2 2017-02-11</span></span>
+<span id="cb3-91"><a href="#cb3-91"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                           m          3 2017-02-11</span></span>
+<span id="cb3-92"><a href="#cb3-92"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity H… m          2 2017-02-11</span></span>
+<span id="cb3-93"><a href="#cb3-93"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-94"><a href="#cb3-94"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-95"><a href="#cb3-95"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-96"><a href="#cb3-96"></a></span>
+<span id="cb3-97"><a href="#cb3-97"></a><span class="co"># rename preserve class</span></span>
+<span id="cb3-98"><a href="#cb3-98"></a>x &lt;-</span>
+<span id="cb3-99"><a href="#cb3-99"></a><span class="st">  </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-100"><a href="#cb3-100"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">left_bin =</span> bin_date)</span>
+<span id="cb3-101"><a href="#cb3-101"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-102"><a href="#cb3-102"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-103"><a href="#cb3-103"></a></span>
+<span id="cb3-104"><a href="#cb3-104"></a><span class="co"># select returns a tibble unless all date, count and group variables are preserved</span></span>
+<span id="cb3-105"><a href="#cb3-105"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb3-106"><a href="#cb3-106"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
+<span id="cb3-107"><a href="#cb3-107"></a><span class="co">#&gt; # A tibble: 24 x 4</span></span>
+<span id="cb3-108"><a href="#cb3-108"></a><span class="co">#&gt;    week_group hospital                                     gender count</span></span>
+<span id="cb3-109"><a href="#cb3-109"></a><span class="co">#&gt;    &lt;aweek&gt;    &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-110"><a href="#cb3-110"></a><span class="co">#&gt;  1 2014-W21   Connaught Hospital                           f          4</span></span>
+<span id="cb3-111"><a href="#cb3-111"></a><span class="co">#&gt;  2 2014-W21   Military Hospital                            f          2</span></span>
+<span id="cb3-112"><a href="#cb3-112"></a><span class="co">#&gt;  3 2014-W21   other                                        f          1</span></span>
+<span id="cb3-113"><a href="#cb3-113"></a><span class="co">#&gt;  4 2014-W21   Princess Christian Maternity Hospital (PCMH) f          3</span></span>
+<span id="cb3-114"><a href="#cb3-114"></a><span class="co">#&gt;  5 2014-W21   Rokupa Hospital                              f          1</span></span>
+<span id="cb3-115"><a href="#cb3-115"></a><span class="co">#&gt;  6 2014-W21   &lt;NA&gt;                                         f          4</span></span>
+<span id="cb3-116"><a href="#cb3-116"></a><span class="co">#&gt;  7 2014-W21   Connaught Hospital                           m          4</span></span>
+<span id="cb3-117"><a href="#cb3-117"></a><span class="co">#&gt;  8 2014-W21   Military Hospital                            m          2</span></span>
+<span id="cb3-118"><a href="#cb3-118"></a><span class="co">#&gt;  9 2014-W21   other                                        m          3</span></span>
+<span id="cb3-119"><a href="#cb3-119"></a><span class="co">#&gt; 10 2014-W21   Princess Christian Maternity Hospital (PCMH) m          2</span></span>
+<span id="cb3-120"><a href="#cb3-120"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-121"><a href="#cb3-121"></a></span>
+<span id="cb3-122"><a href="#cb3-122"></a>x &lt;-</span>
+<span id="cb3-123"><a href="#cb3-123"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-124"><a href="#cb3-124"></a><span class="st">    </span><span class="kw">select</span>(<span class="kw">everything</span>())</span>
+<span id="cb3-125"><a href="#cb3-125"></a>x</span>
+<span id="cb3-126"><a href="#cb3-126"></a><span class="co">#&gt; An incidence2 object: 24 x 5</span></span>
+<span id="cb3-127"><a href="#cb3-127"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-128"><a href="#cb3-128"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-129"><a href="#cb3-129"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-130"><a href="#cb3-130"></a><span class="co">#&gt; </span></span>
+<span id="cb3-131"><a href="#cb3-131"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-132"><a href="#cb3-132"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-133"><a href="#cb3-133"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital                         f          4</span></span>
+<span id="cb3-134"><a href="#cb3-134"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital                          f          2</span></span>
+<span id="cb3-135"><a href="#cb3-135"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                                      f          1</span></span>
+<span id="cb3-136"><a href="#cb3-136"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-137"><a href="#cb3-137"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                            f          1</span></span>
+<span id="cb3-138"><a href="#cb3-138"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-139"><a href="#cb3-139"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital                         m          4</span></span>
+<span id="cb3-140"><a href="#cb3-140"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital                          m          2</span></span>
+<span id="cb3-141"><a href="#cb3-141"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                                      m          3</span></span>
+<span id="cb3-142"><a href="#cb3-142"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… m          2</span></span>
+<span id="cb3-143"><a href="#cb3-143"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-144"><a href="#cb3-144"></a></span>
+<span id="cb3-145"><a href="#cb3-145"></a><span class="co"># Adding rows that are multiples of 2 weeks will maintain class</span></span>
+<span id="cb3-146"><a href="#cb3-146"></a>x &lt;-</span>
+<span id="cb3-147"><a href="#cb3-147"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-148"><a href="#cb3-148"></a><span class="st">    </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-149"><a href="#cb3-149"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">112</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-150"><a href="#cb3-150"></a><span class="st">    </span><span class="kw">bind_rows</span>(inci)</span>
+<span id="cb3-151"><a href="#cb3-151"></a>x</span>
+<span id="cb3-152"><a href="#cb3-152"></a><span class="co">#&gt; An incidence2 object: 26 x 5</span></span>
+<span id="cb3-153"><a href="#cb3-153"></a><span class="co">#&gt; [69 cases from days 2014-05-19 to 2014-09-08]</span></span>
+<span id="cb3-154"><a href="#cb3-154"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-155"><a href="#cb3-155"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-156"><a href="#cb3-156"></a><span class="co">#&gt; </span></span>
+<span id="cb3-157"><a href="#cb3-157"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-158"><a href="#cb3-158"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-159"><a href="#cb3-159"></a><span class="co">#&gt;  1 2014-09-08 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-160"><a href="#cb3-160"></a><span class="co">#&gt;  2 2014-09-08 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-161"><a href="#cb3-161"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-162"><a href="#cb3-162"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-163"><a href="#cb3-163"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
+<span id="cb3-164"><a href="#cb3-164"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-165"><a href="#cb3-165"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
+<span id="cb3-166"><a href="#cb3-166"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-167"><a href="#cb3-167"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
+<span id="cb3-168"><a href="#cb3-168"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
+<span id="cb3-169"><a href="#cb3-169"></a><span class="co">#&gt; # … with 16 more rows</span></span>
+<span id="cb3-170"><a href="#cb3-170"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-171"><a href="#cb3-171"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-172"><a href="#cb3-172"></a></span>
+<span id="cb3-173"><a href="#cb3-173"></a></span>
+<span id="cb3-174"><a href="#cb3-174"></a><span class="co"># Adding rows with dates that are not multiples of 2 weeks drops class</span></span>
+<span id="cb3-175"><a href="#cb3-175"></a>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-176"><a href="#cb3-176"></a><span class="st">  </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-177"><a href="#cb3-177"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">30</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-178"><a href="#cb3-178"></a><span class="st">  </span><span class="kw">bind_rows</span>(inci)</span>
+<span id="cb3-179"><a href="#cb3-179"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
+<span id="cb3-180"><a href="#cb3-180"></a><span class="co">#&gt; # A tibble: 26 x 5</span></span>
+<span id="cb3-181"><a href="#cb3-181"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-182"><a href="#cb3-182"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-183"><a href="#cb3-183"></a><span class="co">#&gt;  1 2014-06-18 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-184"><a href="#cb3-184"></a><span class="co">#&gt;  2 2014-06-18 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-185"><a href="#cb3-185"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-186"><a href="#cb3-186"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-187"><a href="#cb3-187"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
+<span id="cb3-188"><a href="#cb3-188"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-189"><a href="#cb3-189"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
+<span id="cb3-190"><a href="#cb3-190"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-191"><a href="#cb3-191"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
+<span id="cb3-192"><a href="#cb3-192"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
+<span id="cb3-193"><a href="#cb3-193"></a><span class="co">#&gt; # … with 16 more rows</span></span></code></pre></div>
+</div>
+</div>
+<div id="accessing-variable-information" class="section level1">
+<h1>Accessing variable information</h1>
+<p>We provide multiple accessors to easily access information about an <code>incidence()</code> objects structure:</p>
+<ul>
+<li><p><code>get_counts_name()</code>, <code>get_dates_name()</code>, <code>get_date_group_names()</code> and <code>get_group_names()</code> all return character vectors of the column names corresponding to the requested variables.</p></li>
+<li><p><code>get_n()</code> returns the number of observations.</p></li>
+<li><p><code>get_interval()</code> returns the interval of the object.</p></li>
+<li><p><code>get_timespan()</code>returns the number of days the object covers.</p></li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
