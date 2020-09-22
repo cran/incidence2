@@ -57,7 +57,7 @@
 #'   axis tick marks are in week format YYYY-Www when plotting weekly incidence;
 #'   defaults to TRUE.
 #' @param na_color The colour to plot `NA` values in graphs (default: `grey`).
-#' @param centre_labels Should labels on the axis be centred on the bars. This
+#' @param centre_ticks Should ticks on the x axis be centred on the bars. This
 #'   only applies to intervals that produce unambiguous labels (i.e `1 day`,
 #'   `1 month`, `1 quarter` or `1 year`).  Defaults to `FALSE`.
 #' @param legend Position of legend in plot.
@@ -71,7 +71,8 @@
 #' @details
 #'  - `plot` creates a one-pane graph of an incidence object.
 #'  - `facet_plot` creates a multi-facet graph of a grouped incidence object.
-#'    If the object has no groups it returns the same outout as a call to
+#'    If the object has no groups it returns the same output as a call to
+#'    [plot()].
 #'  - If the [incidence()] object has a rolling average column then that
 #'    average will be overlaid on top.
 #'
@@ -109,7 +110,7 @@ plot.incidence2 <- function(x, fill = NULL, stack = TRUE, title = NULL,
                            xlab = "", ylab = NULL, n_breaks = 6,
                            show_cases = FALSE, border = "white",
                            na_color = "grey",
-                           group_labels = TRUE, centre_labels = FALSE,
+                           group_labels = TRUE, centre_ticks = FALSE,
                            legend = c("right", "left", "bottom", "top", "none"),
                            angle = 0, format = NULL,
                            ...) {
@@ -121,14 +122,12 @@ plot.incidence2 <- function(x, fill = NULL, stack = TRUE, title = NULL,
                     xlab, ylab, n_breaks,
                     show_cases, border,
                     na_color,
-                    group_labels, centre_labels,
+                    group_labels, centre_ticks,
                     legend = match.arg(legend),
                     title = title)
 
  out + scale_x_incidence(x, n_breaks, group_labels, angle = angle,
-                         format = format,...)
-
-
+                         format = format, ...)
 }
 
 #' @rdname plot.incidence2
@@ -147,7 +146,7 @@ facet_plot.incidence2 <- function(x, facets = NULL, stack = TRUE, fill = NULL, t
                        xlab = "", ylab = NULL, n_breaks = 3,
                        show_cases = FALSE, border = "white",
                        na_color = "grey",
-                       group_labels = TRUE, centre_labels = FALSE,
+                       group_labels = TRUE, centre_ticks = FALSE,
                        legend = c("bottom", "top", "left", "right", "none"),
                        angle = 0, format = NULL, nrow = NULL, ...) {
 
@@ -163,14 +162,20 @@ facet_plot.incidence2 <- function(x, facets = NULL, stack = TRUE, fill = NULL, t
                     xlab, ylab, n_breaks,
                     show_cases, border,
                     na_color,
-                    group_labels, centre_labels,
+                    group_labels, centre_ticks,
                     legend = match.arg(legend),
                     title = title)
 
   if (is.null(facets) && !is.null(group_vars)) {
-    out <- out + ggplot2::facet_wrap(ggplot2::vars(!!!syms(group_vars)), nrow, ...)
+    out <- 
+      out + 
+      ggplot2::facet_wrap(ggplot2::vars(!!!syms(group_vars)), nrow, ...) +
+      ggplot2::theme(panel.spacing.x = ggplot2::unit(8, "mm"))
   } else if (!is.null(facets)) {
-    out <- out + ggplot2::facet_wrap(ggplot2::vars(!!!syms(facets)), nrow, ...)
+    out <- 
+      out + 
+      ggplot2::facet_wrap(ggplot2::vars(!!!syms(facets)), nrow, ...) +
+      ggplot2::theme(panel.spacing.x = ggplot2::unit(8, "mm"))
   }
 
   out + scale_x_incidence(x, n_breaks, group_labels, angle = angle,
@@ -182,7 +187,7 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
                        xlab = "", ylab = NULL, n_breaks = 6,
                        show_cases = FALSE, border = "white",
                        na_color = "grey",
-                       group_labels = TRUE, centre_labels = FALSE,
+                       group_labels = TRUE, centre_ticks = FALSE,
                        legend = c("right", "left", "bottom", "top", "none"),
                        title = NULL) {
 
@@ -219,9 +224,9 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
 
   # Adding a variable for width in ggplot
   df$interval_days <- interval_days(df)
-  if (to_label(interval) && centre_labels) {
+  if (to_label(interval) && centre_ticks) {
     df$interval_days <- 0
-  } else if (!to_label(interval) && centre_labels) {
+  } else if (!to_label(interval) && centre_ticks) {
     message(paste("centreing label for this interval is not possible",
                   "defaulting to labels on left side of bins",
                   sep = "\n"))
@@ -240,7 +245,7 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
     out <- ggplot2::ggplot(df) +
       ggplot2::geom_col(ggplot2::aes(x = !!sym(x_axis) + .data$interval_days/2,
                                      y = !!sym(y_axis)),
-                        width = interval_days(df),
+                        width = .data$interval_days,
                         color = color,
                         fill = col_pal(1),
                         alpha = alpha) +
@@ -250,7 +255,7 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
     out <- ggplot2::ggplot(df) +
       ggplot2::geom_col(ggplot2::aes(x = !!sym(x_axis) + .data$interval_days/2,
                                      y = !!sym(y_axis)),
-                        width = interval_days(df),
+                        width = .data$interval_days,
                         color = color,
                         fill = fill,
                         alpha = alpha) +
@@ -265,7 +270,7 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
     out <- ggplot2::ggplot(df) +
       ggplot2::geom_col(ggplot2::aes(x = !!sym(x_axis) + .data$interval_days/2,
                                      y = !!sym(y_axis)),
-                        width = interval_days(df),
+                        width = .data$interval_days,
                         color = color,
                         alpha = alpha,
                         position = stack.txt) +
@@ -290,7 +295,7 @@ plot_basic <- function(x, fill = NULL, stack = TRUE,
                         fill  = NA,
                         position = "stack",
                         data = squaredf,
-                        width = interval_days(df))
+                        width = .data$interval_days)
 
     out <- out + squares
   }

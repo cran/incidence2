@@ -39,8 +39,8 @@ i_epiet %>% plot(color = "white", show_cases = TRUE,
                  coord_equal = TRUE, angle = 45, size = 12)
 
 ## ---- facets------------------------------------------------------------------
-i %>% facet_plot(facets = gender, n_breaks = 4)
-i %>% facet_plot(facets = hospital, fill = gender, n_breaks = 4, nrow = 4)
+i %>% facet_plot(facets = gender, n_breaks = 3)
+i %>% facet_plot(facets = hospital, fill = gender, n_breaks = 3, nrow = 4)
 i %>% facet_plot(facets = gender, fill = "grey")
 
 ## ---- centreing---------------------------------------------------------------
@@ -51,7 +51,7 @@ x <- incidence(dat,
                groups = hospital,
                interval = "week") 
   plot(x, fill = hospital, color = "black", n_breaks = nrow(x), 
-       angle = 45, size = 12, centre_labels = TRUE, legend = "top")
+       angle = 45, size = 12, centre_ticks = TRUE, legend = "top")
 
 ## ---- vibrant,   fig.height = 8-----------------------------------------------
 par(mfrow = c(2, 1), mar = c(4,2,1,1))
@@ -64,6 +64,6 @@ barplot(1:9, col = muted(9))
 barplot(1:20, col = muted(20))
 
 ## ---- palettes----------------------------------------------------------------
-i %>% regroup(hospital) %>% plot(fill = hospital, col_pal = rainbow) # see ?rainbow
+i %>% regroup(hospital) %>% plot(fill = hospital, col_pal = rainbow, n_breaks = 3) # see ?rainbow
 i %>% regroup(gender) %>% plot(fill = gender, col_pal = cm.colors)   # see ?cm.colors
 

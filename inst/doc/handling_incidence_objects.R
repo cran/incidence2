@@ -29,7 +29,7 @@ inci %>% regroup()
 ## ----cumulate-----------------------------------------------------------------
 inci %>% 
   cumulate() %>% 
-  facet_plot(facet = hospital)
+  facet_plot(facet = hospital, n_breaks = 2)
 
 ## ----tidyverse----------------------------------------------------------------
 library(dplyr)
