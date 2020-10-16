@@ -15,6 +15,19 @@
 
 <title>Handling incidence objects</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 <script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
 // v0.0.1
 // Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
@@ -31,6 +44,77 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+          color: #aaaaaa;
+        }
+      pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
+      code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+      code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+      code span.at { color: #7d9029; } /* Attribute */
+      code span.bn { color: #40a070; } /* BaseN */
+      code span.bu { } /* BuiltIn */
+      code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+      code span.ch { color: #4070a0; } /* Char */
+      code span.cn { color: #880000; } /* Constant */
+      code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+      code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+      code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+      code span.dt { color: #902000; } /* DataType */
+      code span.dv { color: #40a070; } /* DecVal */
+      code span.er { color: #ff0000; font-weight: bold; } /* Error */
+      code span.ex { } /* Extension */
+      code span.fl { color: #40a070; } /* Float */
+      code span.fu { color: #06287e; } /* Function */
+      code span.im { } /* Import */
+      code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+      code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+      code span.op { color: #666666; } /* Operator */
+      code span.ot { color: #007020; } /* Other */
+      code span.pp { color: #bc7a00; } /* Preprocessor */
+      code span.sc { color: #4070a0; } /* SpecialChar */
+      code span.ss { color: #bb6688; } /* SpecialString */
+      code span.st { color: #4070a0; } /* String */
+      code span.va { color: #19177c; } /* Variable */
+      code span.vs { color: #4070a0; } /* VerbatimString */
+      code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -326,284 +410,284 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="regroup" class="section level2">
 <h2>regroup</h2>
 <p>Sometimes you may find you’ve created a grouped <code>incidence()</code> but now want to change the internal grouping. Assuming you are after a subset of the grouping already generated, then you can use to <code>regroup()</code> function to get the desired aggregation:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(outbreaks)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(incidence2)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># load data</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>dat &lt;-<span class="st"> </span>ebola_sim_clean<span class="op">$</span>linelist</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># generate the incidence object with 3 groups</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>inci &lt;-<span class="st"> </span><span class="kw">incidence</span>(dat, <span class="dt">date_index =</span> date_of_onset,</span>
-<span id="cb1-9"><a href="#cb1-9"></a>                  <span class="dt">groups =</span> <span class="kw">c</span>(gender, hospital, outcome),</span>
-<span id="cb1-10"><a href="#cb1-10"></a>                  <span class="dt">interval =</span> <span class="st">&quot;1 week&quot;</span>)</span>
-<span id="cb1-11"><a href="#cb1-11"></a>inci</span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; An incidence2 object: 2,016 x 6</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; [interval: 1 week]</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; </span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt;    bin_date   week_group gender hospital                           outcome count</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;                              &lt;fct&gt;   &lt;int&gt;</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Military Hospital                  &lt;NA&gt;        1</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   m      Military Hospital                  &lt;NA&gt;        0</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      Connaught Hospital                 &lt;NA&gt;        0</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Connaught Hospital                 &lt;NA&gt;        0</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   f      other                              &lt;NA&gt;        0</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      other                              &lt;NA&gt;        0</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt;  7 2014-04-07 2014-W15   f      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
-<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt;  8 2014-04-07 2014-W15   m      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt;  9 2014-04-07 2014-W15   f      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt; 10 2014-04-07 2014-W15   m      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
-<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt; # … with 2,006 more rows</span></span>
-<span id="cb1-30"><a href="#cb1-30"></a></span>
-<span id="cb1-31"><a href="#cb1-31"></a><span class="co"># regroup to just two groups</span></span>
-<span id="cb1-32"><a href="#cb1-32"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>(<span class="kw">c</span>(gender, outcome))</span>
-<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt; An incidence2 object: 336 x 5</span></span>
-<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
-<span id="cb1-35"><a href="#cb1-35"></a><span class="co">#&gt; [interval: 1 week]</span></span>
-<span id="cb1-36"><a href="#cb1-36"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb1-37"><a href="#cb1-37"></a><span class="co">#&gt; </span></span>
-<span id="cb1-38"><a href="#cb1-38"></a><span class="co">#&gt;    bin_date   week_group gender outcome count</span></span>
-<span id="cb1-39"><a href="#cb1-39"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;   &lt;int&gt;</span></span>
-<span id="cb1-40"><a href="#cb1-40"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Death       0</span></span>
-<span id="cb1-41"><a href="#cb1-41"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   f      Recover     0</span></span>
-<span id="cb1-42"><a href="#cb1-42"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      &lt;NA&gt;        1</span></span>
-<span id="cb1-43"><a href="#cb1-43"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Death       0</span></span>
-<span id="cb1-44"><a href="#cb1-44"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   m      Recover     0</span></span>
-<span id="cb1-45"><a href="#cb1-45"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      &lt;NA&gt;        0</span></span>
-<span id="cb1-46"><a href="#cb1-46"></a><span class="co">#&gt;  7 2014-04-14 2014-W16   f      Death       0</span></span>
-<span id="cb1-47"><a href="#cb1-47"></a><span class="co">#&gt;  8 2014-04-14 2014-W16   f      Recover     0</span></span>
-<span id="cb1-48"><a href="#cb1-48"></a><span class="co">#&gt;  9 2014-04-14 2014-W16   f      &lt;NA&gt;        0</span></span>
-<span id="cb1-49"><a href="#cb1-49"></a><span class="co">#&gt; 10 2014-04-14 2014-W16   m      Death       0</span></span>
-<span id="cb1-50"><a href="#cb1-50"></a><span class="co">#&gt; # … with 326 more rows</span></span>
-<span id="cb1-51"><a href="#cb1-51"></a></span>
-<span id="cb1-52"><a href="#cb1-52"></a><span class="co"># drop all groups</span></span>
-<span id="cb1-53"><a href="#cb1-53"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>()</span>
-<span id="cb1-54"><a href="#cb1-54"></a><span class="co">#&gt; An incidence2 object: 56 x 3</span></span>
-<span id="cb1-55"><a href="#cb1-55"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
-<span id="cb1-56"><a href="#cb1-56"></a><span class="co">#&gt; [interval: 1 week]</span></span>
-<span id="cb1-57"><a href="#cb1-57"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb1-58"><a href="#cb1-58"></a><span class="co">#&gt; </span></span>
-<span id="cb1-59"><a href="#cb1-59"></a><span class="co">#&gt;    bin_date   week_group count</span></span>
-<span id="cb1-60"><a href="#cb1-60"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;int&gt;</span></span>
-<span id="cb1-61"><a href="#cb1-61"></a><span class="co">#&gt;  1 2014-04-07 2014-W15       1</span></span>
-<span id="cb1-62"><a href="#cb1-62"></a><span class="co">#&gt;  2 2014-04-14 2014-W16       1</span></span>
-<span id="cb1-63"><a href="#cb1-63"></a><span class="co">#&gt;  3 2014-04-21 2014-W17       5</span></span>
-<span id="cb1-64"><a href="#cb1-64"></a><span class="co">#&gt;  4 2014-04-28 2014-W18       4</span></span>
-<span id="cb1-65"><a href="#cb1-65"></a><span class="co">#&gt;  5 2014-05-05 2014-W19      12</span></span>
-<span id="cb1-66"><a href="#cb1-66"></a><span class="co">#&gt;  6 2014-05-12 2014-W20      17</span></span>
-<span id="cb1-67"><a href="#cb1-67"></a><span class="co">#&gt;  7 2014-05-19 2014-W21      15</span></span>
-<span id="cb1-68"><a href="#cb1-68"></a><span class="co">#&gt;  8 2014-05-26 2014-W22      19</span></span>
-<span id="cb1-69"><a href="#cb1-69"></a><span class="co">#&gt;  9 2014-06-02 2014-W23      23</span></span>
-<span id="cb1-70"><a href="#cb1-70"></a><span class="co">#&gt; 10 2014-06-09 2014-W24      21</span></span>
-<span id="cb1-71"><a href="#cb1-71"></a><span class="co">#&gt; # … with 46 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(outbreaks)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(incidence2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="co"># load data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>dat &lt;-<span class="st"> </span>ebola_sim_clean<span class="op">$</span>linelist</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="co"># generate the incidence object with 3 groups</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>inci &lt;-<span class="st"> </span><span class="kw">incidence</span>(dat, <span class="dt">date_index =</span> date_of_onset,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>                  <span class="dt">groups =</span> <span class="kw">c</span>(gender, hospital, outcome),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>                  <span class="dt">interval =</span> <span class="st">&quot;1 week&quot;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>inci</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 2,016 x 6</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group gender hospital                           outcome count</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;                              &lt;fct&gt;   &lt;int&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Military Hospital                  &lt;NA&gt;        1</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   m      Military Hospital                  &lt;NA&gt;        0</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      Connaught Hospital                 &lt;NA&gt;        0</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Connaught Hospital                 &lt;NA&gt;        0</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   f      other                              &lt;NA&gt;        0</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      other                              &lt;NA&gt;        0</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a><span class="co">#&gt;  7 2014-04-07 2014-W15   f      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a><span class="co">#&gt;  8 2014-04-07 2014-W15   m      &lt;NA&gt;                               &lt;NA&gt;        0</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a><span class="co">#&gt;  9 2014-04-07 2014-W15   f      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a><span class="co">#&gt; 10 2014-04-07 2014-W15   m      Princess Christian Maternity Hosp… &lt;NA&gt;        0</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a><span class="co">#&gt; # … with 2,006 more rows</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a><span class="co"># regroup to just two groups</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>(<span class="kw">c</span>(gender, outcome))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 336 x 5</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group gender outcome count</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;  &lt;fct&gt;   &lt;int&gt;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true"></a><span class="co">#&gt;  1 2014-04-07 2014-W15   f      Death       0</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true"></a><span class="co">#&gt;  2 2014-04-07 2014-W15   f      Recover     0</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true"></a><span class="co">#&gt;  3 2014-04-07 2014-W15   f      &lt;NA&gt;        1</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true"></a><span class="co">#&gt;  4 2014-04-07 2014-W15   m      Death       0</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true"></a><span class="co">#&gt;  5 2014-04-07 2014-W15   m      Recover     0</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true"></a><span class="co">#&gt;  6 2014-04-07 2014-W15   m      &lt;NA&gt;        0</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true"></a><span class="co">#&gt;  7 2014-04-14 2014-W16   f      Death       0</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true"></a><span class="co">#&gt;  8 2014-04-14 2014-W16   f      Recover     0</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true"></a><span class="co">#&gt;  9 2014-04-14 2014-W16   f      &lt;NA&gt;        0</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true"></a><span class="co">#&gt; 10 2014-04-14 2014-W16   m      Death       0</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true"></a><span class="co">#&gt; # … with 326 more rows</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true"></a><span class="co"># drop all groups</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>()</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 56 x 3</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true"></a><span class="co">#&gt; [5829 cases from days 2014-04-07 to 2015-04-27]</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true"></a><span class="co">#&gt; [interval: 1 week]</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group count</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;int&gt;</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true"></a><span class="co">#&gt;  1 2014-04-07 2014-W15       1</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true"></a><span class="co">#&gt;  2 2014-04-14 2014-W16       1</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true"></a><span class="co">#&gt;  3 2014-04-21 2014-W17       5</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true"></a><span class="co">#&gt;  4 2014-04-28 2014-W18       4</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-05 2014-W19      12</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-12 2014-W20      17</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true"></a><span class="co">#&gt;  7 2014-05-19 2014-W21      15</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-26 2014-W22      19</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true"></a><span class="co">#&gt;  9 2014-06-02 2014-W23      23</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true"></a><span class="co">#&gt; 10 2014-06-09 2014-W24      21</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true"></a><span class="co">#&gt; # … with 46 more rows</span></span></code></pre></div>
 </div>
 <div id="cumulate" class="section level2">
 <h2>cumulate</h2>
 <p>We also provide a helper function, <code>cumulate</code>() to easily generate cumulative incidences:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>inci <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">cumulate</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="st">  </span><span class="kw">facet_plot</span>(<span class="dt">facet =</span> hospital, <span class="dt">n_breaks =</span> <span class="dv">2</span>)</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; plot() can only stack/dodge by one variable.</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; For multi-facet plotting try facet_plot()</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">cumulate</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">facet_plot</span>(<span class="dt">facet =</span> hospital, <span class="dt">n_breaks =</span> <span class="dv">2</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co">#&gt; plot() can only stack/dodge by one variable.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">#&gt; For multi-facet plotting try facet_plot()</span></span></code></pre></div>
 <p><img src="data:image/png;base64,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vZ5atS3jx4+3r3tWVtY///lPi8Xics6vvvrqhRdekKIOAdg2IJhcuXIlMzPziy++sJd8+OGH9ovGKaUTJ078+9//rlDtAp2HBD9ixIilS5eeO3duyJAhW7Zsqaur27VrV1hYmDyVk8j777+/d+/eoqKiTz/99KmnnnrrrbcOHjzY8p9wHNe9e/fZs2e7/F9BEL777jtCSAvzeEOv13/zzTf2j/X19adOnXI3sz1oyziOc1lur6qXy/G766lAfX396dOne/bsyT6+8847u3bt+vjjj++9996lS5fabDb/VzdQvfnmm7t27dq9e/f7779/+PDhjz76SOka+YHijRMCikajWbNmTWNjo/i/KioqoqKiqqurL168KH/FAp+HBL9q1arff/9927Zt2dnZVqs1MTExLy/viSeekKdy7pw+fXrp0qUPPvjg8uXLbTYbpXTZsmU5OTkTJ04sLS0lhIhL7Orr67ds2VJcXNytWzeNRjN48OBHH330559/Zn/173//e8qUKfn5+adPnyaEnDx58tlnn3311VcLCgouXLhQUlLicuGLFy+22WwzZsywz0MI+eCDDx588MGsrKz8/PyrV68SQs6cOZOfn19YWHjffffZQzhq165dXFycPanv378/JSXF/r9OC7QHJYQcPHgwNzfXvkGcau4yrr2q9uUsW7bsk08+YbFWrFjhtN3c2bNnz1//+tdJkyYtW7aMPdhYvH127dr13HPP5ebmZmVlPfPMM2xriCvgcqO5tGnTpnvuucep0GAw5OTk2Gy25uZmb2oeZGJjY9PS0mpqaoirnWJ39OjRBx54oLKy8qeffpo3bx4rtB/fu9xTxOv94kSRtgHBJzIy8rbbbnv77bfF//Xll1+OGTPm9ttvV/zxa4HJQ4Lv1avXL7/88tRTTxkMhm+++Wbr1q3ffvvtggUL5KmcOxs3bszNzd2wYYMgCK+99tqXX3558eLFjRs3rlq16q233jKbzeIS+9+eOnWqW7du8fHx9pJx48bl5uYSQk6cODFw4MD169d369Zty5Yt7H9//PHHrl27Oj7bR7zw4uJinU7neHb9t99+27BhQ0lJyfbt2zt06PD555+z8oqKilGjRn344Ye9evXavHmzeNXS09PtDx74+uuvR44c6W6B9qDXrl0rLi4uLCy0bxBxzVuIa1/OiBEjDhw4QP44bLr99ts9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" style="display: block; margin: auto;" /></p>
 </div>
 <div id="tidyverse-compatibility" class="section level2">
 <h2>Tidyverse compatibility</h2>
 <p>incidence2 has been written with <em>tidyverse</em> compatibility (in particular <a href="https://dplyr.tidyverse.org/">dplyr</a>) at the forefront of the design choices we have made. By this we mean that if an operation from dplyr is applied to an <code>incidence()</code> object then as long as the invariants of the object are preserved (i.e. groups, interval and uniqueness of rows) then the object returned will be an <code>incidence()</code> object. If the invariants are not preserved then a tibble will be returned instead. Some examples of these behaviours are given below:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; </span></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; </span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;     filter, lag</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; </span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co"># create incidence object</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a>inci &lt;-</span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="st">  </span>dat <span class="op">%&gt;%</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="st">  </span><span class="kw">incidence</span>(</span>
-<span id="cb3-15"><a href="#cb3-15"></a>    <span class="dt">date_index =</span> date_of_onset,</span>
-<span id="cb3-16"><a href="#cb3-16"></a>    <span class="dt">interval =</span> <span class="st">&quot;2 weeks&quot;</span>,</span>
-<span id="cb3-17"><a href="#cb3-17"></a>    <span class="dt">first_date =</span> <span class="st">&quot;2014-05-20&quot;</span>,</span>
-<span id="cb3-18"><a href="#cb3-18"></a>    <span class="dt">last_date =</span> <span class="st">&quot;2014-06-10&quot;</span>,</span>
-<span id="cb3-19"><a href="#cb3-19"></a>    <span class="dt">groups =</span> <span class="kw">c</span>(hospital, gender)</span>
-<span id="cb3-20"><a href="#cb3-20"></a>  )</span>
-<span id="cb3-21"><a href="#cb3-21"></a><span class="co">#&gt; 5766 observations outside of [2014-05-20, 2014-06-10] were removed.</span></span>
-<span id="cb3-22"><a href="#cb3-22"></a></span>
-<span id="cb3-23"><a href="#cb3-23"></a><span class="co"># filtering preserves class</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a>x &lt;-</span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a><span class="st">    </span><span class="kw">filter</span>(gender <span class="op">==</span><span class="st"> &quot;f&quot;</span>, hospital <span class="op">==</span><span class="st"> &quot;Rokupa Hospital&quot;</span>)</span>
-<span id="cb3-27"><a href="#cb3-27"></a>x</span>
-<span id="cb3-28"><a href="#cb3-28"></a><span class="co">#&gt; An incidence2 object: 2 x 5</span></span>
-<span id="cb3-29"><a href="#cb3-29"></a><span class="co">#&gt; [2 cases from days 2014-05-19 to 2014-06-02]</span></span>
-<span id="cb3-30"><a href="#cb3-30"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
-<span id="cb3-31"><a href="#cb3-31"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb3-32"><a href="#cb3-32"></a><span class="co">#&gt; </span></span>
-<span id="cb3-33"><a href="#cb3-33"></a><span class="co">#&gt;   bin_date   week_group hospital        gender count</span></span>
-<span id="cb3-34"><a href="#cb3-34"></a><span class="co">#&gt;   &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;           &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-35"><a href="#cb3-35"></a><span class="co">#&gt; 1 2014-05-19 2014-W21   Rokupa Hospital f          1</span></span>
-<span id="cb3-36"><a href="#cb3-36"></a><span class="co">#&gt; 2 2014-06-02 2014-W23   Rokupa Hospital f          1</span></span>
-<span id="cb3-37"><a href="#cb3-37"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
-<span id="cb3-38"><a href="#cb3-38"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-39"><a href="#cb3-39"></a></span>
-<span id="cb3-40"><a href="#cb3-40"></a><span class="co"># slice operations preserve class</span></span>
-<span id="cb3-41"><a href="#cb3-41"></a>x &lt;-</span>
-<span id="cb3-42"><a href="#cb3-42"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-43"><a href="#cb3-43"></a><span class="st">    </span><span class="kw">slice_sample</span>(<span class="dt">n =</span> <span class="dv">10</span>)</span>
-<span id="cb3-44"><a href="#cb3-44"></a>x</span>
-<span id="cb3-45"><a href="#cb3-45"></a><span class="co">#&gt; An incidence2 object: 10 x 5</span></span>
-<span id="cb3-46"><a href="#cb3-46"></a><span class="co">#&gt; [26 cases from days 2014-05-19 to 2014-06-02]</span></span>
-<span id="cb3-47"><a href="#cb3-47"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
-<span id="cb3-48"><a href="#cb3-48"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb3-49"><a href="#cb3-49"></a><span class="co">#&gt; </span></span>
-<span id="cb3-50"><a href="#cb3-50"></a><span class="co">#&gt;    bin_date   week_group hospital           gender count</span></span>
-<span id="cb3-51"><a href="#cb3-51"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;              &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-52"><a href="#cb3-52"></a><span class="co">#&gt;  1 2014-06-02 2014-W23   Connaught Hospital m          6</span></span>
-<span id="cb3-53"><a href="#cb3-53"></a><span class="co">#&gt;  2 2014-06-02 2014-W23   Rokupa Hospital    m          1</span></span>
-<span id="cb3-54"><a href="#cb3-54"></a><span class="co">#&gt;  3 2014-06-02 2014-W23   Military Hospital  f          1</span></span>
-<span id="cb3-55"><a href="#cb3-55"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Connaught Hospital m          4</span></span>
-<span id="cb3-56"><a href="#cb3-56"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Military Hospital  f          2</span></span>
-<span id="cb3-57"><a href="#cb3-57"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   other              m          3</span></span>
-<span id="cb3-58"><a href="#cb3-58"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   &lt;NA&gt;               f          4</span></span>
-<span id="cb3-59"><a href="#cb3-59"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Rokupa Hospital    m          1</span></span>
-<span id="cb3-60"><a href="#cb3-60"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   Rokupa Hospital    f          1</span></span>
-<span id="cb3-61"><a href="#cb3-61"></a><span class="co">#&gt; 10 2014-06-02 2014-W23   Military Hospital  m          3</span></span>
-<span id="cb3-62"><a href="#cb3-62"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
-<span id="cb3-63"><a href="#cb3-63"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-64"><a href="#cb3-64"></a></span>
-<span id="cb3-65"><a href="#cb3-65"></a>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-66"><a href="#cb3-66"></a><span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-67"><a href="#cb3-67"></a><span class="st">  </span><span class="kw">class</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb3-68"><a href="#cb3-68"></a><span class="st">  </span><span class="kw">identical</span>(<span class="kw">class</span>(inci))</span>
-<span id="cb3-69"><a href="#cb3-69"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-70"><a href="#cb3-70"></a></span>
-<span id="cb3-71"><a href="#cb3-71"></a><span class="co"># mutate preserve class</span></span>
-<span id="cb3-72"><a href="#cb3-72"></a>x &lt;-</span>
-<span id="cb3-73"><a href="#cb3-73"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-74"><a href="#cb3-74"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">future =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">999</span>)</span>
-<span id="cb3-75"><a href="#cb3-75"></a>x</span>
-<span id="cb3-76"><a href="#cb3-76"></a><span class="co">#&gt; An incidence2 object: 24 x 6</span></span>
-<span id="cb3-77"><a href="#cb3-77"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
-<span id="cb3-78"><a href="#cb3-78"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
-<span id="cb3-79"><a href="#cb3-79"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb3-80"><a href="#cb3-80"></a><span class="co">#&gt; </span></span>
-<span id="cb3-81"><a href="#cb3-81"></a><span class="co">#&gt;    bin_date   week_group hospital                        gender count future    </span></span>
-<span id="cb3-82"><a href="#cb3-82"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                           &lt;fct&gt;  &lt;int&gt; &lt;date&gt;    </span></span>
-<span id="cb3-83"><a href="#cb3-83"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital              f          4 2017-02-11</span></span>
-<span id="cb3-84"><a href="#cb3-84"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital               f          2 2017-02-11</span></span>
-<span id="cb3-85"><a href="#cb3-85"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                           f          1 2017-02-11</span></span>
-<span id="cb3-86"><a href="#cb3-86"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity H… f          3 2017-02-11</span></span>
-<span id="cb3-87"><a href="#cb3-87"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                 f          1 2017-02-11</span></span>
-<span id="cb3-88"><a href="#cb3-88"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                            f          4 2017-02-11</span></span>
-<span id="cb3-89"><a href="#cb3-89"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital              m          4 2017-02-11</span></span>
-<span id="cb3-90"><a href="#cb3-90"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital               m          2 2017-02-11</span></span>
-<span id="cb3-91"><a href="#cb3-91"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                           m          3 2017-02-11</span></span>
-<span id="cb3-92"><a href="#cb3-92"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity H… m          2 2017-02-11</span></span>
-<span id="cb3-93"><a href="#cb3-93"></a><span class="co">#&gt; # … with 14 more rows</span></span>
-<span id="cb3-94"><a href="#cb3-94"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
-<span id="cb3-95"><a href="#cb3-95"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-96"><a href="#cb3-96"></a></span>
-<span id="cb3-97"><a href="#cb3-97"></a><span class="co"># rename preserve class</span></span>
-<span id="cb3-98"><a href="#cb3-98"></a>x &lt;-</span>
-<span id="cb3-99"><a href="#cb3-99"></a><span class="st">  </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-100"><a href="#cb3-100"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">left_bin =</span> bin_date)</span>
-<span id="cb3-101"><a href="#cb3-101"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
-<span id="cb3-102"><a href="#cb3-102"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-103"><a href="#cb3-103"></a></span>
-<span id="cb3-104"><a href="#cb3-104"></a><span class="co"># select returns a tibble unless all date, count and group variables are preserved</span></span>
-<span id="cb3-105"><a href="#cb3-105"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="dv">1</span>)</span>
-<span id="cb3-106"><a href="#cb3-106"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
-<span id="cb3-107"><a href="#cb3-107"></a><span class="co">#&gt; # A tibble: 24 x 4</span></span>
-<span id="cb3-108"><a href="#cb3-108"></a><span class="co">#&gt;    week_group hospital                                     gender count</span></span>
-<span id="cb3-109"><a href="#cb3-109"></a><span class="co">#&gt;    &lt;aweek&gt;    &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-110"><a href="#cb3-110"></a><span class="co">#&gt;  1 2014-W21   Connaught Hospital                           f          4</span></span>
-<span id="cb3-111"><a href="#cb3-111"></a><span class="co">#&gt;  2 2014-W21   Military Hospital                            f          2</span></span>
-<span id="cb3-112"><a href="#cb3-112"></a><span class="co">#&gt;  3 2014-W21   other                                        f          1</span></span>
-<span id="cb3-113"><a href="#cb3-113"></a><span class="co">#&gt;  4 2014-W21   Princess Christian Maternity Hospital (PCMH) f          3</span></span>
-<span id="cb3-114"><a href="#cb3-114"></a><span class="co">#&gt;  5 2014-W21   Rokupa Hospital                              f          1</span></span>
-<span id="cb3-115"><a href="#cb3-115"></a><span class="co">#&gt;  6 2014-W21   &lt;NA&gt;                                         f          4</span></span>
-<span id="cb3-116"><a href="#cb3-116"></a><span class="co">#&gt;  7 2014-W21   Connaught Hospital                           m          4</span></span>
-<span id="cb3-117"><a href="#cb3-117"></a><span class="co">#&gt;  8 2014-W21   Military Hospital                            m          2</span></span>
-<span id="cb3-118"><a href="#cb3-118"></a><span class="co">#&gt;  9 2014-W21   other                                        m          3</span></span>
-<span id="cb3-119"><a href="#cb3-119"></a><span class="co">#&gt; 10 2014-W21   Princess Christian Maternity Hospital (PCMH) m          2</span></span>
-<span id="cb3-120"><a href="#cb3-120"></a><span class="co">#&gt; # … with 14 more rows</span></span>
-<span id="cb3-121"><a href="#cb3-121"></a></span>
-<span id="cb3-122"><a href="#cb3-122"></a>x &lt;-</span>
-<span id="cb3-123"><a href="#cb3-123"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-124"><a href="#cb3-124"></a><span class="st">    </span><span class="kw">select</span>(<span class="kw">everything</span>())</span>
-<span id="cb3-125"><a href="#cb3-125"></a>x</span>
-<span id="cb3-126"><a href="#cb3-126"></a><span class="co">#&gt; An incidence2 object: 24 x 5</span></span>
-<span id="cb3-127"><a href="#cb3-127"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
-<span id="cb3-128"><a href="#cb3-128"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
-<span id="cb3-129"><a href="#cb3-129"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb3-130"><a href="#cb3-130"></a><span class="co">#&gt; </span></span>
-<span id="cb3-131"><a href="#cb3-131"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
-<span id="cb3-132"><a href="#cb3-132"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-133"><a href="#cb3-133"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital                         f          4</span></span>
-<span id="cb3-134"><a href="#cb3-134"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital                          f          2</span></span>
-<span id="cb3-135"><a href="#cb3-135"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                                      f          1</span></span>
-<span id="cb3-136"><a href="#cb3-136"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… f          3</span></span>
-<span id="cb3-137"><a href="#cb3-137"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                            f          1</span></span>
-<span id="cb3-138"><a href="#cb3-138"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                                       f          4</span></span>
-<span id="cb3-139"><a href="#cb3-139"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital                         m          4</span></span>
-<span id="cb3-140"><a href="#cb3-140"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital                          m          2</span></span>
-<span id="cb3-141"><a href="#cb3-141"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                                      m          3</span></span>
-<span id="cb3-142"><a href="#cb3-142"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… m          2</span></span>
-<span id="cb3-143"><a href="#cb3-143"></a><span class="co">#&gt; # … with 14 more rows</span></span>
-<span id="cb3-144"><a href="#cb3-144"></a></span>
-<span id="cb3-145"><a href="#cb3-145"></a><span class="co"># Adding rows that are multiples of 2 weeks will maintain class</span></span>
-<span id="cb3-146"><a href="#cb3-146"></a>x &lt;-</span>
-<span id="cb3-147"><a href="#cb3-147"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-148"><a href="#cb3-148"></a><span class="st">    </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-149"><a href="#cb3-149"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">112</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-150"><a href="#cb3-150"></a><span class="st">    </span><span class="kw">bind_rows</span>(inci)</span>
-<span id="cb3-151"><a href="#cb3-151"></a>x</span>
-<span id="cb3-152"><a href="#cb3-152"></a><span class="co">#&gt; An incidence2 object: 26 x 5</span></span>
-<span id="cb3-153"><a href="#cb3-153"></a><span class="co">#&gt; [69 cases from days 2014-05-19 to 2014-09-08]</span></span>
-<span id="cb3-154"><a href="#cb3-154"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
-<span id="cb3-155"><a href="#cb3-155"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
-<span id="cb3-156"><a href="#cb3-156"></a><span class="co">#&gt; </span></span>
-<span id="cb3-157"><a href="#cb3-157"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
-<span id="cb3-158"><a href="#cb3-158"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-159"><a href="#cb3-159"></a><span class="co">#&gt;  1 2014-09-08 2014-W21-1 Connaught Hospital                         f          4</span></span>
-<span id="cb3-160"><a href="#cb3-160"></a><span class="co">#&gt;  2 2014-09-08 2014-W21-1 Military Hospital                          f          2</span></span>
-<span id="cb3-161"><a href="#cb3-161"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
-<span id="cb3-162"><a href="#cb3-162"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
-<span id="cb3-163"><a href="#cb3-163"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
-<span id="cb3-164"><a href="#cb3-164"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
-<span id="cb3-165"><a href="#cb3-165"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
-<span id="cb3-166"><a href="#cb3-166"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
-<span id="cb3-167"><a href="#cb3-167"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
-<span id="cb3-168"><a href="#cb3-168"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
-<span id="cb3-169"><a href="#cb3-169"></a><span class="co">#&gt; # … with 16 more rows</span></span>
-<span id="cb3-170"><a href="#cb3-170"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
-<span id="cb3-171"><a href="#cb3-171"></a><span class="co">#&gt; [1] TRUE</span></span>
-<span id="cb3-172"><a href="#cb3-172"></a></span>
-<span id="cb3-173"><a href="#cb3-173"></a></span>
-<span id="cb3-174"><a href="#cb3-174"></a><span class="co"># Adding rows with dates that are not multiples of 2 weeks drops class</span></span>
-<span id="cb3-175"><a href="#cb3-175"></a>inci <span class="op">%&gt;%</span></span>
-<span id="cb3-176"><a href="#cb3-176"></a><span class="st">  </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-177"><a href="#cb3-177"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">30</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-178"><a href="#cb3-178"></a><span class="st">  </span><span class="kw">bind_rows</span>(inci)</span>
-<span id="cb3-179"><a href="#cb3-179"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
-<span id="cb3-180"><a href="#cb3-180"></a><span class="co">#&gt; # A tibble: 26 x 5</span></span>
-<span id="cb3-181"><a href="#cb3-181"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
-<span id="cb3-182"><a href="#cb3-182"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-183"><a href="#cb3-183"></a><span class="co">#&gt;  1 2014-06-18 2014-W21-1 Connaught Hospital                         f          4</span></span>
-<span id="cb3-184"><a href="#cb3-184"></a><span class="co">#&gt;  2 2014-06-18 2014-W21-1 Military Hospital                          f          2</span></span>
-<span id="cb3-185"><a href="#cb3-185"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
-<span id="cb3-186"><a href="#cb3-186"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
-<span id="cb3-187"><a href="#cb3-187"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
-<span id="cb3-188"><a href="#cb3-188"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
-<span id="cb3-189"><a href="#cb3-189"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
-<span id="cb3-190"><a href="#cb3-190"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
-<span id="cb3-191"><a href="#cb3-191"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
-<span id="cb3-192"><a href="#cb3-192"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
-<span id="cb3-193"><a href="#cb3-193"></a><span class="co">#&gt; # … with 16 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt;     filter, lag</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co"># create incidence object</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>inci &lt;-</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="st">  </span>dat <span class="op">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a><span class="st">  </span><span class="kw">incidence</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>    <span class="dt">date_index =</span> date_of_onset,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>    <span class="dt">interval =</span> <span class="st">&quot;2 weeks&quot;</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>    <span class="dt">first_date =</span> <span class="st">&quot;2014-05-20&quot;</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>    <span class="dt">last_date =</span> <span class="st">&quot;2014-06-10&quot;</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>    <span class="dt">groups =</span> <span class="kw">c</span>(hospital, gender)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>  )</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a><span class="co">#&gt; 5766 observations outside of [2014-05-20, 2014-06-10] were removed.</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a><span class="co"># filtering preserves class</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a><span class="st">    </span><span class="kw">filter</span>(gender <span class="op">==</span><span class="st"> &quot;f&quot;</span>, hospital <span class="op">==</span><span class="st"> &quot;Rokupa Hospital&quot;</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a>x</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 2 x 5</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a><span class="co">#&gt; [2 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a><span class="co">#&gt;   bin_date   week_group hospital        gender count</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a><span class="co">#&gt;   &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;           &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a><span class="co">#&gt; 1 2014-05-19 2014-W21   Rokupa Hospital f          1</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a><span class="co">#&gt; 2 2014-06-02 2014-W23   Rokupa Hospital f          1</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="co"># slice operations preserve class</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="st">    </span><span class="kw">slice_sample</span>(<span class="dt">n =</span> <span class="dv">10</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a>x</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 10 x 5</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true"></a><span class="co">#&gt; [30 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group hospital           gender count</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;              &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true"></a><span class="co">#&gt;  1 2014-06-02 2014-W23   Military Hospital  m          3</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true"></a><span class="co">#&gt;  2 2014-06-02 2014-W23   &lt;NA&gt;               f          8</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true"></a><span class="co">#&gt;  3 2014-06-02 2014-W23   Rokupa Hospital    m          1</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true"></a><span class="co">#&gt;  4 2014-06-02 2014-W23   other              f          3</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Connaught Hospital m          4</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;               m          4</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true"></a><span class="co">#&gt;  7 2014-06-02 2014-W23   Connaught Hospital f          1</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Rokupa Hospital    f          1</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   &lt;NA&gt;               f          4</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Rokupa Hospital    m          1</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true"></a>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true"></a><span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true"></a><span class="st">  </span><span class="kw">class</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true"></a><span class="st">  </span><span class="kw">identical</span>(<span class="kw">class</span>(inci))</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true"></a><span class="co"># mutate preserve class</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">future =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">999</span>)</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true"></a>x</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 24 x 6</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group hospital                        gender count future    </span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                           &lt;fct&gt;  &lt;int&gt; &lt;date&gt;    </span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital              f          4 2017-02-11</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital               f          2 2017-02-11</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                           f          1 2017-02-11</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity H… f          3 2017-02-11</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                 f          1 2017-02-11</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                            f          4 2017-02-11</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital              m          4 2017-02-11</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital               m          2 2017-02-11</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                           m          3 2017-02-11</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity H… m          2 2017-02-11</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true"></a></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true"></a><span class="co"># rename preserve class</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true"></a><span class="st">  </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">left_bin =</span> bin_date)</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true"></a><span class="co"># select returns a tibble unless all date, count and group variables are preserved</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 24 x 4</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true"></a><span class="co">#&gt;    week_group hospital                                     gender count</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true"></a><span class="co">#&gt;    &lt;aweek&gt;    &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true"></a><span class="co">#&gt;  1 2014-W21   Connaught Hospital                           f          4</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true"></a><span class="co">#&gt;  2 2014-W21   Military Hospital                            f          2</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true"></a><span class="co">#&gt;  3 2014-W21   other                                        f          1</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true"></a><span class="co">#&gt;  4 2014-W21   Princess Christian Maternity Hospital (PCMH) f          3</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true"></a><span class="co">#&gt;  5 2014-W21   Rokupa Hospital                              f          1</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true"></a><span class="co">#&gt;  6 2014-W21   &lt;NA&gt;                                         f          4</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true"></a><span class="co">#&gt;  7 2014-W21   Connaught Hospital                           m          4</span></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true"></a><span class="co">#&gt;  8 2014-W21   Military Hospital                            m          2</span></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true"></a><span class="co">#&gt;  9 2014-W21   other                                        m          3</span></span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true"></a><span class="co">#&gt; 10 2014-W21   Princess Christian Maternity Hospital (PCMH) m          2</span></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true"></a><span class="st">    </span><span class="kw">select</span>(<span class="kw">everything</span>())</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true"></a>x</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 24 x 5</span></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true"></a><span class="co">#&gt; [63 cases from days 2014-05-19 to 2014-06-02]</span></span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true"></a><span class="co">#&gt;  1 2014-05-19 2014-W21   Connaught Hospital                         f          4</span></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true"></a><span class="co">#&gt;  2 2014-05-19 2014-W21   Military Hospital                          f          2</span></span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true"></a><span class="co">#&gt;  3 2014-05-19 2014-W21   other                                      f          1</span></span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true"></a><span class="co">#&gt;  4 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-19 2014-W21   Rokupa Hospital                            f          1</span></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-19 2014-W21   &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true"></a><span class="co">#&gt;  7 2014-05-19 2014-W21   Connaught Hospital                         m          4</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-19 2014-W21   Military Hospital                          m          2</span></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true"></a><span class="co">#&gt;  9 2014-05-19 2014-W21   other                                      m          3</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true"></a><span class="co">#&gt; 10 2014-05-19 2014-W21   Princess Christian Maternity Hospital (PC… m          2</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true"></a><span class="co">#&gt; # … with 14 more rows</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true"></a></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true"></a><span class="co"># Adding rows that are multiples of 2 weeks will maintain class</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true"></a>x &lt;-</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true"></a><span class="st">    </span>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true"></a><span class="st">    </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">112</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true"></a><span class="st">    </span><span class="kw">bind_rows</span>(inci)</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true"></a>x</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 26 x 5</span></span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true"></a><span class="co">#&gt; [69 cases from days 2014-05-19 to 2014-09-08]</span></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true"></a><span class="co">#&gt; [interval: 2 weeks]</span></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true"></a><span class="co">#&gt; [cumulative: FALSE]</span></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true"></a><span class="co">#&gt;  1 2014-09-08 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true"></a><span class="co">#&gt;  2 2014-09-08 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true"></a><span class="co">#&gt; # … with 16 more rows</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true"></a><span class="kw">identical</span>(<span class="kw">class</span>(x), <span class="kw">class</span>(inci))</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true"></a></span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true"></a></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true"></a><span class="co"># Adding rows with dates that are not multiples of 2 weeks drops class</span></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true"></a>inci <span class="op">%&gt;%</span></span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true"></a><span class="st">  </span><span class="kw">slice_head</span>(<span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">bin_date =</span> bin_date <span class="op">+</span><span class="st"> </span><span class="dv">30</span>) <span class="op">%&gt;%</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true"></a><span class="st">  </span><span class="kw">bind_rows</span>(inci)</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true"></a><span class="co">#&gt; Note: incidence2 class dropped in returned object</span></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 26 x 5</span></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true"></a><span class="co">#&gt;    bin_date   week_group hospital                                   gender count</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true"></a><span class="co">#&gt;    &lt;date&gt;     &lt;aweek&gt;    &lt;fct&gt;                                      &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true"></a><span class="co">#&gt;  1 2014-06-18 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true"></a><span class="co">#&gt;  2 2014-06-18 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true"></a><span class="co">#&gt;  3 2014-05-19 2014-W21-1 Connaught Hospital                         f          4</span></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true"></a><span class="co">#&gt;  4 2014-05-19 2014-W21-1 Military Hospital                          f          2</span></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true"></a><span class="co">#&gt;  5 2014-05-19 2014-W21-1 other                                      f          1</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true"></a><span class="co">#&gt;  6 2014-05-19 2014-W21-1 Princess Christian Maternity Hospital (PC… f          3</span></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true"></a><span class="co">#&gt;  7 2014-05-19 2014-W21-1 Rokupa Hospital                            f          1</span></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true"></a><span class="co">#&gt;  8 2014-05-19 2014-W21-1 &lt;NA&gt;                                       f          4</span></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true"></a><span class="co">#&gt;  9 2014-05-19 2014-W21-1 Connaught Hospital                         m          4</span></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true"></a><span class="co">#&gt; 10 2014-05-19 2014-W21-1 Military Hospital                          m          2</span></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true"></a><span class="co">#&gt; # … with 16 more rows</span></span></code></pre></div>
 </div>
 </div>
 <div id="accessing-variable-information" class="section level1">

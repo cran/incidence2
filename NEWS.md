@@ -1,3 +1,7 @@
+# incidence2 0.2.1
+* Fixes bug in as.data.frame.incidence2
+* Limits internal reliance on dplyr.
+
 # incidence2 0.2.0
 
 * Fixes issue with monthly incidence objects when `show_cases = TRUE` (see #42).

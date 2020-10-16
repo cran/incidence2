@@ -7,8 +7,14 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 
-## ----install2, eval=FALSE-----------------------------------------------------
-#  devtools::install_github("reconhub/incidence2")
+## ---- eval=FALSE--------------------------------------------------------------
+#  install.packages("incidence2")
+
+## ---- eval=FALSE--------------------------------------------------------------
+#  if (!require(remotes)) {
+#    install.packages("remotes")
+#  }
+#  remotes::install_github("reconhub/incidence2", build_vignettes = TRUE)
 
 ## ----data---------------------------------------------------------------------
 library(outbreaks)
