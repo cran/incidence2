@@ -5,8 +5,6 @@
 #' * default method is a wrapper for `cumsum`
 #' * `incidence` objects: computes cumulative incidence over time
 #'
-#' @author Thibaut Jombart
-#'
 #' @param x An incidence object.
 #'
 #' @examples
@@ -20,6 +18,7 @@
 #'
 #' cumulative_i <- cumulate(i)
 #' cumulative_i
+#' @importFrom dplyr .data
 #' @export
 #' @rdname cumulate
 cumulate <- function(x) {
@@ -32,6 +31,7 @@ cumulate <- function(x) {
 cumulate.default <- function(x) {
   cumsum(x)
 }
+
 
 #' @importFrom dplyr grouped_df mutate ungroup
 #' @export

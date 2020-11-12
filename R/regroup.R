@@ -4,9 +4,6 @@
 #' The resulting [incidence()] object will contains counts summed over
 #' the groups present in the input.
 #'
-#' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
-#'
-#'
 #' @param x An [incidence()] object.
 #' @param groups The groups to sum over.  If `NULL` (default) then the function
 #'   ignores all groups.
@@ -36,7 +33,8 @@ regroup <- function(x, groups = NULL){
   }
 
   # check groups present
-  groups <- arg_values(!!rlang::enexpr(groups))
+  groups <- eval(substitute(alist(groups)))[[1]]
+  groups <- arg_to_values(groups)
   column_names <- names(x)
   check_presence(groups, column_names)
 

@@ -1,3 +1,9 @@
+# incidence2 0.2.2
+* Fixes bug in get_interval.
+* Removes message that was displayed when incidence class dropped.
+* Refactoring of internal code to improve maintainability.
+* Tests now use the 3rd edition of testthat. 
+
 # incidence2 0.2.1
 * Fixes bug in as.data.frame.incidence2
 * Limits internal reliance on dplyr.

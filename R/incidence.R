@@ -1,33 +1,30 @@
 #' Compute the incidence of events
 #'
 #' @param x A tibble or a data frame (see Note) representing a linelist.
-#'
 #' @param date_index The time index of the given data.  This should be the name,
 #'   with or without quotation, corresponding to a date column in x of the
 #'   class:  integer, numeric, Date, POSIXct, POSIXlt, and character. (See Note
 #'   about `numeric` and `character` formats)
-#'
 #' @param interval An integer or character indicating the (fixed) size of the
 #'   time interval used for computing the incidence; defaults to 1 day. This can
 #'   also be a text string that corresponds to a valid date interval: day, week,
 #'   month, quarter, or year. (See Note).
-#'
 #' @param groups An optional vector giving the names of the groups of
 #'   observations for which incidence should be grouped.  This can be given with
 #'   or without quotation.`
-#'
 #' @param na_as_group A logical value indicating if missing group values (NA)
 #'   should treated as a separate category (`TRUE`) or removed from
 #'   consideration (`FALSE`).
-#'
 #' @param first_date,last_date optional first/last dates to be used. When
 #'   these are `NULL` (default), the dates from the first/last dates are taken
 #'   from the observations. If these dates are provided, the observations will
 #'   be trimmed to the range of \[first_date, last_date\].
+#' @param standard (Only applicable where date_index references a Date object)
+#'   When `TRUE` (default) and the `interval` one of "week", "month", "quarter",
+#'   or "year", then this will cause the bins for the counts to start at the
+#'   beginning of the interval (See Note).
 #' @param count The count variable of the given data.  If NULL (default) the
 #'   data is taken to be a linelist of individual observations.
-#'
-#' @param ... Additional arguments used by other methods.
 #'
 #' @return An incidence2 object.  This is a subclass of tibble that represents
 #'   and aggregated count of observations grouped according to the specified
@@ -116,9 +113,6 @@
 #' date falls outside of a calendar date that is easily represented across the
 #' interval.
 #'
-#' @author Thibaut Jombart, Rich Fitzjohn, Zhian Kamvar, Tim Taylor
-#'
-#'
 #' @examples
 #' if (requireNamespace("outbreaks", quietly = TRUE)) {
 #'   withAutoprint({
@@ -164,26 +158,64 @@
 #'                   interval = "week",
 #'                   first_date = Sys.Date() + 1)
 #' @export
-incidence <- function(x, date_index, interval = 1L, ...) {
+incidence <- function(x, date_index, groups = NULL, interval = 1L, first_date = NULL,
+                      last_date = NULL, na_as_group = TRUE, standard = TRUE,
+                      count = NULL) {
+  
+  # Convert groups and date variable to character values
+  groups <- eval(substitute(alist(groups)))[[1]]
+  groups <- arg_to_values(groups)
+  date_index <- eval(substitute(alist(date_index)))[[1]]
+  date_index <- arg_to_values(date_index)
+  count <- eval(substitute(alist(count)))[[1]]
+  count <- arg_to_values(count)
+   
+  # Basic checks
+  stopifnot(
+    "The argument `date` should be of length one " = (length(date_index) == 1),
+    "The argument `interval` should be of length one" = (length(interval) == 1),
+    "The argument `first_date` should be of length one if not NULL" =
+      (length(first_date) == 1 || is.null(first_date)),
+    "The argument `last_date` should be of length one if not NULL" =
+      (length(last_date) == 1 || is.null(last_date)),
+    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
+      (is.logical(na_as_group)),
+    "The argument `standard` must be either `TRUE` or `FALSE`." =
+      (is.logical(standard))
+  )
+  
+  # check that variables are present in x
+  column_names <- names(x)
+  check_presence(c(groups, date_index, count), column_names)
 
-  # change date_index to character vector
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  UseMethod("incidence", x[[date_index]])
+  out <- incidence_(
+    x = x,
+    date_index = date_index,
+    groups = groups,
+    interval = interval,
+    first_date = first_date,
+    last_date = last_date,
+    na_as_group = na_as_group,
+    standard = standard,
+    count = count
+  )
+
+}
+
+
+
+incidence_ <- function(x, date_index, interval = 1L, ...) {
+  UseMethod("incidence_", x[[date_index]])
 }
 # -------------------------------------------------------------------------
 
 
 
 # -------------------------------------------------------------------------
-#' @export
-#' @rdname incidence
-incidence.default <- function(x, date_index, interval = 1L, ...) {
-
-  # change date_index to character vector
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-
+incidence_.default <- function(x, date_index, interval = 1L, ...) {
+  
   x[[date_index]] <- check_dates(x[[date_index]])
-
+  
   # In theory the code should not run to here as check_dates should error:
   # but you never know ...
   incidence(x, date_index, interval = interval, ...)
@@ -192,41 +224,18 @@ incidence.default <- function(x, date_index, interval = 1L, ...) {
 
 
 # -------------------------------------------------------------------------
-#' @param standard (Only applicable where date_index references a Date object)
-#'   When `TRUE` (default) and the `interval` one of "week", "month", "quarter",
-#'   or "year", then this will cause the bins for the counts to start at the
-#'   beginning of the interval (See Note).
-#'
-#' @export
-#' @rdname incidence
-incidence.Date <- function(x, date_index, interval = 1L, standard = TRUE,
+incidence_.Date <- function(x, date_index, interval = 1L, standard = TRUE,
                            groups = NULL, na_as_group = TRUE,
                            first_date = NULL, last_date = NULL, count = NULL,
                            ...) {
 
-  ellipsis::check_dots_empty()
+  # make sure input can be used
+  x[[date_index]] <- check_dates(x[[date_index]])
+  interval <- check_interval(interval, standard)
 
-  # change date_index and group to character vectors
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  groups <- arg_values(!!rlang::enexpr(groups))
-  count <- arg_values(!!rlang::enexpr(count))
-
-  stopifnot(
-    "The argument `date_index` should be of length one" =
-      (length(date_index) == 1),
-    "The argument `first_date` should be of length one if not null" =
-      (length(first_date) == 1 || is.null(first_date)),
-    "The argument `last_date` should be of length one if not null" =
-      (length(last_date) == 1 || is.null(last_date)),
-    "The argument `standard` must be either `TRUE` or `FALSE`." =
-      (is.logical(standard)),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
-
-  # check variables present
-  column_names <- names(x)
-  check_presence(c(groups, date_index, count), column_names)
+  # Check the interval and arrange the breaks
+  first_date <- check_boundaries(x[[date_index]], first_date, "first")
+  last_date <- check_boundaries(x[[date_index]], last_date, "last")
 
   out <- make_incidence(x,
     date_index = date_index,
@@ -248,43 +257,12 @@ incidence.Date <- function(x, date_index, interval = 1L, standard = TRUE,
 
 
 # -------------------------------------------------------------------------
-#' @param standard (Only applicable where date_index references a Date object)
-#'   When `TRUE` (default) and the `interval` one of "week", "month", "quarter",
-#'   or "year", then this will cause the bins for the counts to start at the
-#'   beginning of the interval (See Note).
-
-#' @export
-#' @rdname incidence
-incidence.character <- function(x, date_index, interval = 1L, standard = TRUE,
+incidence_.character <- function(x, date_index, interval = 1L, standard = TRUE,
                                 groups = NULL, na_as_group = TRUE,
                                 first_date = NULL, last_date = NULL, count = NULL,
                                 ...) {
 
-  ellipsis::check_dots_empty()
-
-  # change date_index and group to character vectors
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  groups <- arg_values(!!rlang::enexpr(groups))
-  count <- arg_values(!!rlang::enexpr(count))
-
-  stopifnot(
-    "The argument `date_index` should be of length one" =
-      (length(date_index) == 1),
-    "The argument `first_date` should be of length one if not null" =
-      (length(first_date) == 1 || is.null(first_date)),
-    "The argument `last_date` should be of length one if not null" =
-      (length(last_date) == 1 || is.null(last_date)),
-    "The argument `standard` must be either `TRUE` or `FALSE`." =
-      (is.logical(standard)),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
-
-  # check variables present
-  column_names <- names(x)
-  check_presence(c(groups, date_index, count), column_names)
-
-
+  # check and convert dates
   dates <- x[[date_index]]
   iso_std <- grepl("^[0-9]{4}-[01][0-9]-[0-3][0-9]$", trimws(dates))
   iso_std[is.na(dates)] <- TRUE # prevent false alarms
@@ -296,8 +274,12 @@ incidence.character <- function(x, date_index, interval = 1L, standard = TRUE,
     stop(sprintf(msg, dates[!iso_std][1]))
   }
   dates <- check_dates(dates)
-
   x[[date_index]] <- as.Date(trimws(dates))
+
+  # Check the interval and bounding dates
+  interval <- check_interval(interval, standard)
+  first_date <- check_boundaries(x[[date_index]], first_date, "first")
+  last_date <- check_boundaries(x[[date_index]], last_date, "last")
 
   out <- make_incidence(x,
     date_index = date_index,
@@ -323,37 +305,21 @@ incidence.character <- function(x, date_index, interval = 1L, standard = TRUE,
 # time interval defaulting to 1. 'bins' are time intervals, identified by the
 # left date, left-inclusive and right-exclusive, i.e. the time interval defined
 # by d1 and d2 is [d1, d2[.
-
-#' @export
-#' @rdname incidence
-incidence.integer <- function(x, date_index, interval = 1L,
+incidence_.integer <- function(x, date_index, interval = 1L,
                               groups = NULL, na_as_group = TRUE,
                               first_date = NULL, last_date = NULL, count = NULL,
                               ...) {
 
-  ellipsis::check_dots_empty()
-
-  # change date_index and group to character vectors
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  groups <- arg_values(!!rlang::enexpr(groups))
-  count <- arg_values(!!rlang::enexpr(count))
-
-  stopifnot(
-    "The argument `date_index` should be of length one" =
-      (length(date_index) == 1),
-    "The argument `first_date` should be of length one if not null" =
-      (length(first_date) == 1 || is.null(first_date)),
-    "The argument `last_date` should be of length one if not null" =
-      (length(last_date) == 1 || is.null(last_date)),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
-
-  # check variables present
-  column_names <- names(x)
-  check_presence(c(groups, date_index, count), column_names)
-
+  # check date input
+  x[[date_index]] <- check_dates(x[[date_index]])
+  
+  # Check / fix bounding dates
+  first_date <- check_boundaries(x[[date_index]], first_date, "first")
+  last_date <- check_boundaries(x[[date_index]], last_date, "last")
+  
+  # check and correct interval
   interval <- valid_interval_integer(interval)
+  interval <- check_interval(interval, TRUE)
 
   out <- make_incidence(x,
     date_index = date_index,
@@ -376,36 +342,21 @@ incidence.integer <- function(x, date_index, interval = 1L,
 
 
 # -------------------------------------------------------------------------
-#' @export
-#' @rdname incidence
-incidence.numeric <- function(x, date_index, interval = 1L,
+incidence_.numeric <- function(x, date_index, interval = 1L,
                               groups = NULL, na_as_group = TRUE,
                               first_date = NULL, last_date = NULL, count = NULL,
                               ...) {
 
-  ellipsis::check_dots_empty()
-
-  # change date_index and group to character vectors
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  groups <- arg_values(!!rlang::enexpr(groups))
-  count <- arg_values(!!rlang::enexpr(count))
-
-  stopifnot(
-    "The argument `date_index` should be of length one" =
-      (length(date_index) == 1),
-    "The argument `first_date` should be of length one if not null" =
-      (length(first_date) == 1 || is.null(first_date)),
-    "The argument `last_date` should be of length one if not null" =
-      (length(last_date) == 1 || is.null(last_date)),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
-
-  # check variables present
-  column_names <- names(x)
-  check_presence(c(groups, date_index, count), column_names)
-
+  # check date input
+  x[[date_index]] <- check_dates(x[[date_index]])
+  
+  # Check / fix bounding dates
+  first_date <- check_boundaries(x[[date_index]], first_date, "first")
+  last_date <- check_boundaries(x[[date_index]], last_date, "last")
+  
+  # check and correct interval
   interval <- valid_interval_integer(interval)
+  interval <- check_interval(interval, TRUE)
 
   out <- make_incidence(x,
     date_index = date_index,
@@ -427,39 +378,20 @@ incidence.numeric <- function(x, date_index, interval = 1L,
 
 
 # -------------------------------------------------------------------------
-#' @export
-#' @rdname incidence
-incidence.POSIXt <- function(x, date_index, interval = 1L, standard = TRUE,
+incidence_.POSIXt <- function(x, date_index, interval = 1L, standard = TRUE,
                              groups = NULL, na_as_group = TRUE,
                              first_date = NULL, last_date = NULL, count = NULL,
                              ...) {
 
-  ellipsis::check_dots_empty()
+  # check interval
+  interval <- check_interval(interval, standard)
 
-  # change date_index and group to character vectors
-  date_index <- arg_values(!!rlang::enexpr(date_index))
-  groups <- arg_values(!!rlang::enexpr(groups))
-  count <- arg_values(!!rlang::enexpr(count))
-
-  stopifnot(
-    "The argument `date_index` should be of length one" =
-      (length(date_index) == 1),
-    "The argument `first_date` should be of length one if not null" =
-      (length(first_date) == 1 || is.null(first_date)),
-    "The argument `last_date` should be of length one if not null" =
-      (length(last_date) == 1 || is.null(last_date)),
-    "The argument `standard` must be either `TRUE` or `FALSE`." =
-      (is.logical(standard)),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
-
-  # check variables present
-  column_names <- names(x)
-  check_presence(c(groups, date_index, count), column_names)
-
+  # Check the interval and arrange the breaks
   dates <- check_dates(as.POSIXct(x[[date_index]]))
   x[[date_index]] <- as.Date(dates)
+
+  first_date <- check_boundaries(x[[date_index]], first_date, "first")
+  last_date <- check_boundaries(x[[date_index]], last_date, "last")
 
   out <- make_incidence(x,
     date_index = date_index,
@@ -473,6 +405,7 @@ incidence.POSIXt <- function(x, date_index, interval = 1L, standard = TRUE,
     ...
   )
 
+  out <- group_labels(out, interval, standard)
   attr(out, "type") <- "POSIXt"
   date_col <- attr(out, "date")
   out[[date_col]] <- as.POSIXlt(out[[date_col]])
@@ -485,7 +418,11 @@ incidence.POSIXt <- function(x, date_index, interval = 1L, standard = TRUE,
 # -------------------------------------------------------------------------
 
 
+
+
+
 # -------------------------------------------------------------------------
+#' @importFrom dplyr .data
 group_labels <- function(x, interval, standard) {
   date_var <- attr(x, "date")
 
