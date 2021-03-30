@@ -1,3 +1,4 @@
+set.seed(1)
 int <- sample(-3L:50L, 100, replace = TRUE)
 dates <- as.Date("2018-01-31") + int
 group_1 <- sample(letters[1:3], length(dates), replace = TRUE)
@@ -13,45 +14,36 @@ test_that("get_group_names works", {
 })
 
 test_that("get_dates works", {
-  expect_equal(get_dates(x2), x2$bin_date)
+  expect_equal(get_dates(x2), x2$date_index)
   expect_error(get_dates("test"), "Not implemented for class character")
 })
 
 test_that("get_dates_name works", {
-  expect_equal(get_dates_name(x2), c("bin_date"))
+  expect_equal(get_dates_name(x2), c("date_index"))
   expect_error(get_dates_name("test"), "Not implemented for class character")
 })
 
-test_that("get_date_group_names works", {
-  expect_equal(get_date_group_names(x), c("week_group"))
-  expect_error(get_date_group_names("test"), "Not implemented for class character")
-})
 
 test_that("get_counts works", {
   expect_equal(get_counts(x2), x2$count)
   expect_error(get_counts("test"), "Not implemented for class character")
 })
 
-test_that("get_counts_name works", {
-  expect_equal(get_counts_name(x2), "count")
-  expect_error(get_counts_name("test"), "Not implemented for class character")
+test_that("get_count_names works", {
+  expect_equal(get_count_names(x2), "count")
+  expect_error(get_count_names("test"), "Not implemented for class character")
 })
 
-test_that("get_timespan works", {
-  span <- as.integer(max(x2$bin_date) - min(x2$bin_date) + 1)
-  expect_equal(get_timespan(x2), span)
-  expect_error(get_timespan("test"), "Not implemented for class character")
-})
 
 test_that("get_n works", {
-  expect_equal(get_n(x2), 100L)
+  expect_equal(get_n(x2), c(count=100L))
   expect_error(get_n("test"), "Not implemented for class character")
 })
 
 
 test_that("get_interval works", {
   expect_equal(get_interval(x2, integer = TRUE), 14L)
-  expect_equal(get_interval(x2), "2 weeks")
+  expect_equal(get_interval(x2), "2 monday weeks")
   expect_error(get_interval("test"), "Not implemented for class character")
 
   month_dates <- as.Date("2019-01-1") + 0:30
@@ -78,6 +70,19 @@ test_that("get_interval works", {
 
 })
 
+
+test_that("get_timespan works as expected", {
+  dates <- seq(as.Date("2021-01-04"), as.Date("2021-02-07"), "days")
+  x <- incidence(data.frame(dates), date_index = dates)
+  xx <- incidence(data.frame(dates), date_index = dates, interval = "weeks")
+  xxx <- incidence(data.frame(dates), date_index = dates, interval = "months")
+
+  expect_equal(get_timespan(x), 35)
+  expect_equal(get_timespan(xx), 35)
+  expect_equal(get_timespan(xxx), 59)
+  expect_error(get_timespan("bob"))
+
+})
 
 
 

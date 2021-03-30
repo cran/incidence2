@@ -8,8 +8,11 @@
 #' @export
 summary.incidence2 <- function(object, ...) {
 
+  # due to NSE notes in R CMD check
+  ..count_var <- . <- NULL
+
   # get the date and count variables
-  count_var <- get_counts_name(object)
+  count_var <- get_count_names(object)
   date_var <- get_dates_name(object)
 
   # header
@@ -19,14 +22,30 @@ summary.incidence2 <- function(object, ...) {
   cat(pillar::style_subtle(header))
 
   # cases over date range
-  cat(sprintf(
-    "%d cases from days %s to %s\n",
-    sum(object[[count_var]]), min(object[[date_var]]), max(object[[date_var]])
-  ))
+  for (i in count_var) {
+    if (inherits(object[[date_var]], "period")) {
+      d1 <- as.Date(min(object[[date_var]]))
+      d2 <- as.Date(max(object[[date_var]]) + 1) - 1
+    } else if (inherits(object[[date_var]], "int_period")) {
+      d1 <- as.integer(min(object[[date_var]]))
+      d2 <- as.integer(max(object[[date_var]]) + 1) - 1
+    } else {
+      d1 <- min(object[[date_var]])
+      d2 <- max(object[[date_var]])
+    }
+
+    if(i == "count") {
+      msg <- sprintf("%d cases from %s to %s\n", sum(object[[i]]), d1, d2)
+    } else {
+      msg <- sprintf("%d %s from %s to %s\n", sum(object[[i]]), i, d1, d2)
+    }
+    cat(msg)
+  }
+
 
   # interval
   interval <- get_interval(object)
-  if (is.integer(interval)) {
+  if (is.numeric(interval)) {
     cat(sprintf("interval: %d %s\n", interval, ifelse(interval < 2, "day", "days")))
   } else if (grepl("\\d", interval)) {
     cat(sprintf("interval: %s\n", interval))
@@ -51,8 +70,9 @@ summary.incidence2 <- function(object, ...) {
                 ifelse(length(groups) < 2, "variable", "variables")))
 
     for (gr in groups) {
-      tmp <- grouped_df(object, gr)
-      tmp <- summarise(tmp, count = sum( .data[[count_var]] ))
+      tmp <- as.data.table(object)
+      tmp <- tmp[, lapply(.SD, sum, na.rm = TRUE), by = c(gr), .SDcols = count_var]
+      tmp <- tibble::as_tibble(tmp)
       tmp <- format(tmp)
       cat(tmp[-1], sep = "\n")
       cat("\n\n")

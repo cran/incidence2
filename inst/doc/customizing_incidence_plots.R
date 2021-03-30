@@ -10,12 +10,14 @@ knitr::opts_chunk$set(
 ## ---- data--------------------------------------------------------------------
 library(outbreaks)
 library(incidence2)
+library(magrittr)
 
 dat <- ebola_sim_clean$linelist
 str(dat)
 
 i <- incidence(dat, date_index = date_of_onset, interval = 7,
                groups = c(gender, hospital))
+i
 
 ## ---- plot1-------------------------------------------------------------------
 i %>% plot()
@@ -26,32 +28,19 @@ i %>% plot(color = "white")
 ## ---- fill--------------------------------------------------------------------
 i %>% plot(fill = gender)
 i %>% plot(fill = hospital, legend = "bottom")
-i %>% plot(fill = "red")
+i %>% regroup() %>% plot(fill = "red", color = "white")
 
 ## ---- rotateandformat---------------------------------------------------------
-i %>% plot(group_labels = FALSE, 
-           format = "%a %d %B %Y",
-           angle = 45)
+i %>% plot(angle = 45)
 
 ## ---- epiet-------------------------------------------------------------------
 i_epiet <- incidence(dat[160:180, ], date_index = date_of_onset)
-i_epiet %>% plot(color = "white", show_cases = TRUE,
-                 coord_equal = TRUE, angle = 45, size = 12)
+i_epiet %>% plot(color = "white", show_cases = TRUE, angle = 45, size = 10, n_breaks = 20)
 
 ## ---- facets------------------------------------------------------------------
 i %>% facet_plot(facets = gender, n_breaks = 3)
 i %>% facet_plot(facets = hospital, fill = gender, n_breaks = 3, nrow = 4)
-i %>% facet_plot(facets = gender, fill = "grey")
-
-## ---- centreing---------------------------------------------------------------
-x <- incidence(dat, 
-               date_index = date_of_onset,
-               first_date = as.Date("2014-10-01") - 25,
-               last_date = as.Date("2014-10-01") + 25,
-               groups = hospital,
-               interval = "week") 
-  plot(x, fill = hospital, color = "black", n_breaks = nrow(x), 
-       angle = 45, size = 12, centre_ticks = TRUE, legend = "top")
+i %>% regroup(gender) %>% facet_plot(facets = gender, fill = "grey", color = "white")
 
 ## ---- vibrant,   fig.height = 8-----------------------------------------------
 par(mfrow = c(2, 1), mar = c(4,2,1,1))

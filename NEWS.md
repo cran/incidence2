@@ -1,3 +1,17 @@
+# incidence2 (development version)
+Due to multiple changes in the underlying representation of incidence2 objects
+this release may possibly break old workflows particularly those relying on
+the old implementations of date grouping:
+
+* Now uses the package [`grates`](https://github.com/reconverse/grates) for
+  date grouping.  This introduces the s3 classes `yrwk`, `yrmon`, `yrqtr`, `yr`,
+  `period` and `int_period` as well as associated constructors which `incidence`
+  now builds upon. As a result of this the
+  [aweek](https://cran.r-project.org/package=aweek) dependency has been dropped.
+* Add's `keep_first` and `keep_last` functions.
+* Construction of `incidence` objects now faster due to underlying use of
+  data.table.
+
 # incidence2 0.2.2
 * Fixes bug in get_interval.
 * Removes message that was displayed when incidence class dropped.

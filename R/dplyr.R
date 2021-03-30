@@ -14,7 +14,7 @@
 #'
 #' @return TRUE or FALSE
 #'
-#' @importFrom data.table as.data.table
+#' @import data.table
 #' @noRd
 incidence_can_reconstruct <- function(x, to) {
 
@@ -29,8 +29,8 @@ incidence_can_reconstruct <- function(x, to) {
   }
 
   ## check count is present
-  count <- attr(to, "count")
-  if (!(count %in% x_names)) {
+  counts <- attr(to, "counts")
+  if (!any(counts %in% x_names)) {
     return(FALSE)
   }
 
@@ -40,56 +40,12 @@ incidence_can_reconstruct <- function(x, to) {
     return(FALSE)
   }
 
-  ## check date_group is present
-  date_group <- attr(to, "date_group")
-  if (!is.null(date_group)) {
-    if (!(all(date_group %in% x_names))) {
-      return(FALSE)
-    }
-  }
 
   ## ensure no rows are duplicated within x
   if (anyDuplicated(as.data.table(x))) {
     return(FALSE)
   }
 
-  ## check interval is the same or a multiple off the invariant interval
-  to_interval <- get_interval(to)
-
-  if (is.numeric(to_interval)) {
-    x_intervals <- unique(diff(x[[date_var]]))
-    if (!(all((x_intervals %% to_interval) == 0))) {
-      return(FALSE)
-    }
-  } else if (is.character(to_interval)) {
-    if (grepl("week", to_interval, ignore.case = TRUE)) {
-      to_interval <- get_interval(to, integer = TRUE)
-      x_intervals <- unique(diff(x[[date_var]]))
-      if (!all((x_intervals %% to_interval) == 0)) {
-        return(FALSE)
-      }
-    } else if (grepl("month", to_interval, ignore.case = TRUE)) {
-      dates <- x[[date_var]]
-      days <- as.integer(format(dates, "%d"))
-      if (!all(days == 1L)) {
-        return(FALSE)
-      }
-    } else if (grepl("quarter", to_interval, ignore.case = TRUE)) {
-      dates <- x[[date_var]]
-      days <- as.integer(format(dates, "%d"))
-      months <- as.integer(format(dates, "%m"))
-      if (!all(days == 1L) || !all(months %in% c(1L, 4L, 7L, 10L))) {
-        return(FALSE)
-      }
-    } else if (grepl("year", to_interval, ignore.case = TRUE)) {
-      dates <- x[[date_var]]
-      days <- as.integer(format(dates, "%d"))
-      months <- as.integer(format(dates, "%m"))
-      if (!all(days == 1L) || !all(months == 1L)) {
-        return(FALSE)
-      }
-    }
-  }
   TRUE
 }
 # -------------------------------------------------------------------------
@@ -131,6 +87,12 @@ df_reconstruct <- function(x, to) {
 
   # Otherwise copy over attributes of `to`
   attributes(x) <- attrs
+
+  # fix names in case a count removed
+  x_names <- names(x)
+  counts <- attr(x, "counts")
+  attr(x, "counts") <- counts[counts %in% x_names]
+
   x
 }
 # -------------------------------------------------------------------------
@@ -173,20 +135,14 @@ new_bare_tibble <- function(x) {
   date_index <- which(current_names %in% date_var)
   attr(x, "date") <- value[date_index]
 
-  count_var <- attr(x, "count")
+  count_var <- attr(x, "counts")
   count_index <- which(current_names %in% count_var)
-  attr(x, "count") <- value[count_index]
+  attr(x, "counts") <- value[count_index]
 
   group_vars <- attr(x, "groups")
   if (!is.null(group_vars)) {
     group_index <- which(current_names %in% group_vars)
     attr(x, "groups") <- value[group_index]
-  }
-
-  date_group_var <- attr(x, "date_group")
-  if (!is.null(date_group_var)) {
-    date_group_index <- which(current_names %in% date_group_var)
-    attr(x, "date_group") <- value[date_group_index]
   }
 
   out <- NextMethod()
