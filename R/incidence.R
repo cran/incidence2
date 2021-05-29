@@ -29,11 +29,13 @@
 #'   consideration (`FALSE`). Defaults to `TRUE`.
 #' @param counts The count variables of the given data.  If NULL (default) the
 #'   data is taken to be a linelist of individual observations.
-#' @param firstdate When the interval is in days, or numeric, and also has a
+#' @param firstdate When the interval is numeric or in days/months and has a
 #'   numeric prefix greater than 1, then you can optionally specify the date
-#'   that you wish your intervals to begin from.  If NULL (default) then the
-#'   intervals will start at the minimum value contained in the date_index
-#'   column.
+#'   that you wish to anchor your intervals to begin from.  If NULL (default)
+#'   then the intervals will start at the minimum value contained in the
+#'   `date_index` column. Note that the class of `firstdate` must be `Date` if
+#'   the `date_index` column is Date, POSIXct, POSIXlt, or character and integer
+#'   otherwise.
 #'
 #' @return An incidence2 object.  This is a subclass of tibble that represents
 #'   and aggregated count of observations grouped according to the specified
@@ -67,10 +69,10 @@
 #'   where these values can optionally be preceded by a (positive or negative)
 #'   integer and a space, or followed by "s".  When no prefix is given:
 #'
-#'   - "week"    : uses the "yrwk" class (see [`as_yrwk()`]).
-#'   - "month"   : uses the "yrmon" class (see [`as_yrmon()`]).
-#'   - "quarter" : uses the "yrqtr" class (see [`as_yrqtr()`]).
-#'   - "year"    : uses the "yr" class (see [`as_yr()`]).
+#'   - "week"    : uses the "grates_yearweek" class (see [`grates::as_yearweek()`]).
+#'   - "month"   : uses the "grates_month" class (see [`grates::as_month()`]).
+#'   - "quarter" : uses the "grates_quarter" class (see [`grates::as_quarter()`]).
+#'   - "year"    : uses the "grates_year" class (see [`grates::as_year()`]).
 #'
 #'   When a prefix is provided (e.g. 2 weeks) the output is an object of class
 #'   "period" (see [`as_period()`]).  Note that for the values "month",
@@ -106,7 +108,7 @@
 #' It's also possible to use something like "3 weeks: Saturday"; In addition,
 #' there are keywords reserved for specific days of the week:
 #'
-#'   - interval = "week", standard = TRUE (Default, Monday)
+#'   - interval = "week", (Default, Monday)
 #'   - interval = "ISOweek"  (Monday)
 #'   - interval = "EPIweek"  (Sunday)
 #'   - interval = "MMWRweek" (Sunday)
@@ -148,11 +150,8 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
                       na_as_group = TRUE, counts = NULL, firstdate = NULL) {
 
   # minimal checks (others come later or in nested functions)
-  stopifnot(
-    "The argument `interval` should be of length one." = (length(interval) == 1),
-    "The argument `na_as_group` must be either `TRUE` or `FALSE`." =
-      (is.logical(na_as_group))
-  )
+  vctrs::vec_assert(interval, size = 1)
+  vctrs::vec_assert(na_as_group, ptype = logical(), size = 1)
 
   # tidyselect is used so we can rely on that for dealing with a lot of the
   # non-standard evaluation issues that arise and also issue nice error messages
@@ -173,18 +172,13 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
   if (length(idx) > 1) {
     call_nms <- rlang::call_args_names(rlang::get_expr(date_index))
     if (any(call_nms %in% "")) {
-      stop(
-        "If multiple date indices are specified they must be named",
-        .call = FALSE
-      )
+      abort("If multiple date indices are specified they must be named")
     }
     names(x)[idx] <- date_index <- names(idx)
   } else {
     idx <- tidyselect::eval_select(date_index, x, allow_rename = FALSE)
     date_index <- names(x)[idx]
   }
-
-
 
   # Convert groups to character variables
   counts <- rlang::enquo(counts)
@@ -195,7 +189,7 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
     counts <- NULL
   }
 
-  # generate names for resultajnt count columns if needed
+  # generate names for resultant count columns if needed
   if (is.null(counts)) {
     if (length(date_index) == 1) {
       count_names <- "count"
@@ -204,12 +198,10 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
     }
   }
 
-
-
   # ensure all date_index are of same class
   date_classes <- vapply(x[date_index], function(x) class(x)[1], character(1))
   if (length(unique(date_classes)) != 1L) {
-    stop("date_index columns must be of the same class", call. = FALSE)
+    abort("date_index columns must be of the same class")
   }
 
   # ensure we have a firstdate value
@@ -218,7 +210,7 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
   }
 
   # ensure we can work with dates (done here mainly for error message)
-  x[date_index] <- lapply(x[date_index], standardise_dates)
+  x[date_index] <- lapply(x[date_index], check_dates)
 
   # Calculate an incidence object for each value of date_index
   res <-
@@ -263,6 +255,12 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
   res
 }
 
+# ------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------- #
+# -------------------------------- INTERNALS ------------------------------ #
+# ------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------- #
+
 
 #' Default internal constructor for incidence objects.
 #'
@@ -287,8 +285,6 @@ incidence <- function(x, date_index, groups = NULL, interval = 1L,
 #'
 #' @return An incidence2 object.
 #'
-#' @import data.table
-#' @importFrom stats complete.cases na.omit
 #' @noRd
 make_incidence <- function(x, date_index, groups, interval, na_as_group, counts,
                            count_name, firstdate) {
@@ -347,9 +343,7 @@ make_incidence <- function(x, date_index, groups, interval, na_as_group, counts,
   x <- x[c(date_col, groups, counts)]
 
   # standardise interval
-  if (!is.integer(x[[date_col]])) {
-    interval <- standardise_interval(interval)
-  }
+  interval <- create_interval_string(x[[date_col]])
 
   # create subclass of tibble
   tbl <- tibble::new_tibble(
@@ -368,52 +362,60 @@ make_incidence <- function(x, date_index, groups, interval, na_as_group, counts,
 }
 
 
-standardise_interval <- function(interval) {
-
-  cond1 <- interval == 1L
-  cond2 <- get_interval_type(interval) == "day"
-  cond3 <- as.character(get_interval_number(interval)) == "1"
-
-  if (cond1 || (cond2 && cond3)) {
-    interval = "1 day"
-  } else if (is.integer(interval) || is.numeric(interval)) {
-    interval <- sprintf("%d days", interval)
-  } else if (is.character(interval)) {
-    type <- get_interval_type(interval)
-    n <- get_interval_number(interval)
-    if (type == "week") {
-      wd <- grates::get_week_start(interval, numeric = FALSE)
-      interval <- sprintf("%d %s %s", n, wd, type)
-    } else {
-      interval <- sprintf("%d %s", n, type)
-    }
-    if (n > 1) interval <- paste0(interval, "s")
-  }
-  interval
-}
-
-
-standardise_dates <- function(x) {
+check_dates <- function(x) {
   if (inherits(x, "numeric")) {
     # Attempt to cast to integer and give useful error message if not possible
-    tmp <- try(int_cast(x), silent = TRUE)
+    tmp <- try(vctrs::vec_cast(x, integer()), silent = TRUE)
     if (inherits(tmp, "try-error")) {
-      stop(
-        "Where numeric, x[[date_index]] must be a vector of whole numbers",
-        call. = FALSE
-      )
+      abort("Where numeric, x[[date_index]] must be a vector of whole numbers")
     }
     x <- tmp
   }  else {
     formats <- c("Date", "POSIXt", "integer", "numeric", "character")
     if (!rlang::inherits_any(x, formats)) {
-      stop(
-        "Unable to convert date_index variable to a grouped date.\n",
-        "    Accepted formats are: ",
-        paste(formats, collapse = ", "),
-        call. = FALSE
-      )
+      abort(c(
+        "Unable to convert date_index variable to a grouped date. Accepted formats are:",
+        paste(formats, collapse = ", ")
+      ))
     }
   }
   x
 }
+
+create_interval_string <- function(x) {
+  UseMethod("create_interval_string")
+}
+
+create_interval_string.default <- function(x) {
+  abort(
+    sprintf("Not implemented for class %s", paste(class(x), collapse = ", "))
+  )
+}
+
+create_interval_string.grates_month <- function(x) {
+  n <- grates::get_n(x)
+  if (n > 1) sprintf("%d months", n) else "1 month"
+}
+
+create_interval_string.grates_yearweek <- function(x) {
+  firstday <- grates::get_firstday(x)
+  weekday <- get_weekday_name(firstday)
+  sprintf("1 (%s) week ", weekday)
+}
+
+create_interval_string.grates_quarter <- function(x) "1 quarter"
+
+create_interval_string.grates_year <- function(x) "1 year"
+
+create_interval_string.grates_period <- function(x) {
+  n <- grates::get_n(x)
+  sprintf("%d days", n)
+}
+
+create_interval_string.grates_int_period <- function(x) grates::get_n(x)
+
+create_interval_string.numeric <- function(x) 1
+
+create_interval_string.Date <- function(x) "1 day"
+
+

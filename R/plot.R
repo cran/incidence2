@@ -25,6 +25,12 @@
 #' @param facets Which variable to facet plots by.  If NULL will use all
 #'   group_labels of the incidence object.
 #' @param title Optional title for the graph.
+#' @param centre_dates If the interval is one of a single week, month, quarter
+#'   or year the x_axis labels are centred with custom category labels. Set this
+#'   option to FALSE to use date labels at the breaks.
+#' @param date_format Format to use if "Date" scales are required. The value is
+#'   used by `format.Date()` and can be any input acceptable by that function
+#'   (defaults to "%Y-%m-%d).
 #' @param stack A logical indicating if bars of multiple groups should be
 #'   stacked, or displayed side-by-side. Only used if fill is not NULL.
 #' @param col_pal col_pal The color palette to be used for the groups; defaults
@@ -37,8 +43,10 @@
 #' @param ylab The label to be used for the y-axis; by default, a label will be
 #'   generated automatically according to the time interval used in incidence
 #'   computation.
-#' @param n_breaks n_breaks the ideal number of breaks to be used for the x-axis
-#'   labeling
+#' @param n.breaks Approximate number of breaks calculated using
+#'   `scales::breaks_pretty` (default 6).
+#' @param width Value between 0 and 1 indicating the relative size of the bars
+#'   to the interval. Default 1.
 #' @param show_cases if `TRUE` (default: `FALSE`), then each observation will be
 #'   colored by a border. The border defaults to a white border unless specified
 #'   otherwise. This is normally used outbreaks with a small number of cases.
@@ -92,15 +100,21 @@
 
 #' @importFrom rlang sym syms .data
 #' @export
-plot.incidence2 <- function(x, count = NULL, fill = NULL, stack = TRUE,
+plot.incidence2 <- function(x, count = NULL, fill = NULL, centre_dates = TRUE,
+                            date_format = "%Y-%m-%d", stack = TRUE,
                             title = NULL, col_pal = vibrant, alpha = 0.7,
-                            color = NA, xlab = "", ylab = NULL, n_breaks = 5,
-                            show_cases = FALSE, border = "white",
+                            color = NA, xlab = "", ylab = NULL, n.breaks = 6,
+                            width = 1, show_cases = FALSE, border = "white",
                             na_color = "grey",
                             legend = c("right", "left", "bottom", "top", "none"),
                             angle = 0, size = NULL, ...) {
 
   check_suggests("ggplot2")
+  if (!(length(width) == 1L && is.numeric(width))) {
+    abort("`width` should be numeric and of length 1")
+  }
+
+
 
   ellipsis::check_dots_used()
 
@@ -116,18 +130,13 @@ plot.incidence2 <- function(x, count = NULL, fill = NULL, stack = TRUE,
   if (is.null(count)) {
     count <- get_count_names(x)[1]
   } else if (length(count) > 1) {
-    stop(
-      "plot() can only work with one count variable at a time.\n",
-      call. = FALSE
-    )
+    abort("plot() can only work with one count variable at a time.")
   } else if (!(count %in% get_count_names(x))) {
-    stop(
-      "Value given for 'count' is not a variable in x.\n",
-      "       Permitted values can be obtained with get_count_names(x).",
-      call. = FALSE
-    )
+    abort(c(
+      "Value given for 'count' is not a variable in x.",
+      i = "Permitted values can be obtained with get_count_names(x)."
+    ))
   }
-
 
   # Convert fill to character
   tmp <- rlang::enquo(fill)
@@ -138,33 +147,14 @@ plot.incidence2 <- function(x, count = NULL, fill = NULL, stack = TRUE,
   }
 
   out <- plot_basic(x = x, count = count, fill = fill, stack = stack,
+                    centre_dates = centre_dates, date_format = date_format,
+                    n.breaks = n.breaks, width = width,
                     col_pal = col_pal, alpha = alpha, color = color,
                     xlab = xlab, ylab = ylab, show_cases = show_cases,
                     border = border, na_color = na_color,
-                    legend = match.arg(legend), title = title)
+                    legend = match.arg(legend), title = title, ...)
 
-  out <- out + rotate_and_scale(angle = angle, size = size)
-
-  dat <- get_dates(x)
-  if (inherits(dat, "yrwk")) {
-    out + scale_x_yrwk(n = n_breaks, firstday = get_firstday(dat), ...)
-  } else if (inherits(dat, "yrmon")) {
-    out + scale_x_yrmon(n = n_breaks, ...)
-  } else if (inherits(dat, "yrqtr")) {
-    out + scale_x_yrqtr(n = n_breaks, ...)
-  } else if (inherits(dat, "yr")) {
-    out + scale_x_yr(n = n_breaks, ...)
-  } else if (inherits(dat, "period")) {
-    out + scale_x_period(n = n_breaks, firstdate = min(dat), interval = get_interval(dat), ...)
-  } else if (inherits(dat, "int_period")) {
-    out + scale_x_int_period(n = n_breaks, firstdate = min(dat), interval = get_interval(dat), ...)
-  } else if (inherits(dat, "Date")) {
-    out + ggplot2::scale_x_date(breaks = scales::pretty_breaks(n = n_breaks), ...)
-  } else if (inherits(dat, "integer")) {
-    out + ggplot2::scale_x_continuous(breaks = scales::pretty_breaks(n = n_breaks), ...)
-  } else {
-    stop("Something has gone wrong! Please let the incidence2 devs know.")
-  }
+  out + rotate_and_scale(angle = angle, size = size)
 
 }
 
@@ -179,13 +169,15 @@ facet_plot <- function(x, ...) {
 #' @rdname plot.incidence2
 #' @aliases facet_plot.incidence2
 #' @export
-facet_plot.incidence2 <- function(x, count = NULL, facets = NULL, stack = TRUE,
-                            fill = NULL, title = NULL, col_pal = vibrant,
-                            alpha = 0.7, color = NA, xlab = "",
-                            ylab = NULL, n_breaks = 3, show_cases = FALSE,
-                            border = "white", na_color = "grey",
-                            legend = c("bottom", "top", "left", "right", "none"),
-                            angle = 0, size = NULL, nrow = NULL, ...) {
+facet_plot.incidence2 <- function(x, count = NULL, facets = NULL,
+                                  centre_dates = TRUE, date_format = "%Y-%m-%d",
+                                  stack = TRUE, fill = NULL, title = NULL,
+                                  col_pal = vibrant, alpha = 0.7, color = NA,
+                                  xlab = "", ylab = NULL, n.breaks = 3,
+                                  width = 1, show_cases = FALSE,
+                                  border = "white", na_color = "grey",
+                                  legend = c("bottom", "top", "left", "right", "none"),
+                                  angle = 0, size = NULL, nrow = NULL, ...) {
 
   check_suggests("ggplot2")
 
@@ -222,29 +214,12 @@ facet_plot.incidence2 <- function(x, count = NULL, facets = NULL, stack = TRUE,
   group_vars <- get_group_names(x)
 
   out <- plot_basic(x = x, count = count, fill = fill, stack = stack,
+                    centre_dates = centre_dates, date_format = date_format,
+                    n.breaks = n.breaks, width = width,
                     col_pal = col_pal,alpha = alpha, color = color, xlab = xlab,
                     ylab = ylab, show_cases = show_cases, border = border,
                     na_color = na_color, legend = match.arg(legend),
-                    title = title)
-
-  dat <- get_dates(x)
-  if (inherits(dat, "yrwk")) {
-    out <- out + scale_x_yrwk(n = n_breaks, firstday = get_firstday(dat), ...)
-  } else if (inherits(dat, "yrmon")) {
-    out <- out + scale_x_yrmon(n = n_breaks, ...)
-  } else if (inherits(dat, "yrqtr")) {
-    out <- out + scale_x_yrqtr(n = n_breaks, ...)
-  } else if (inherits(dat, "yr")) {
-    out <- out + scale_x_yr(n = n_breaks, ...)
-  } else if (inherits(dat, "period")) {
-    out <- out + scale_x_period(n = n_breaks, firstdate = min(dat), interval = get_interval(dat), ...)
-  } else if (inherits(dat, "int_period")) {
-    out <- out + scale_x_int_period(n = n_breaks, firstdate = min(dat), interval = get_interval(dat), ...)
-  } else if (inherits(dat, "Date")) {
-    out <- out + ggplot2::scale_x_date(breaks = scales::pretty_breaks(n = n_breaks), ...)
-  } else {
-    stop("Something has gone wrong! Please let the incidence2 devs know.")
-  }
+                    title = title, ...)
 
   out <- out + rotate_and_scale(angle = angle, size = size)
 
@@ -263,13 +238,14 @@ facet_plot.incidence2 <- function(x, count = NULL, facets = NULL, stack = TRUE,
   out
 }
 
-plot_basic <- function(x, count, fill = NULL, stack = TRUE,
+plot_basic <- function(x, count, fill = NULL, centre_dates = TRUE, stack = TRUE,
+                       n.breaks = 6, width = 1, date_format = "%Y-%m-%d",
                        col_pal = vibrant, alpha = 0.7, color = NA,
                        xlab = "", ylab = NULL,
                        show_cases = FALSE, border = "white",
                        na_color = "grey",
                        legend = c("right", "left", "bottom", "top", "none"),
-                       title = NULL) {
+                       title = NULL, ...) {
 
 
   # get relevant variables
@@ -301,20 +277,8 @@ plot_basic <- function(x, count, fill = NULL, stack = TRUE,
     }
   }
 
-  width <- NULL
   d <- get_dates(x)
-  if (inherits(d, "yrwk") | inherits(d, "yrmon") | inherits(d, "yrqtr") | inherits(d, "yr")) {
-    width <- 1
-  } else if (inherits(d, "int_period")) {
-    width <- get_interval(d, days = TRUE)
-  } else if (inherits(d, "period")) {
-    d_interval <- get_interval(d)
-    if (get_interval_type(d_interval) %in% c("double", "integer", "numeric")) {
-      width <- get_interval(d, days = TRUE)
-    } else if (get_interval_type(d_interval) == "week") {
-      width <- get_interval(d, days = TRUE) / 7
-    }
-  }
+  width <- get_interval_number(interval) * width
 
   if (is.null(fill)) {
     out <- ggplot2::ggplot(df) +
@@ -352,7 +316,7 @@ plot_basic <- function(x, count, fill = NULL, stack = TRUE,
       ggplot2::aes(fill = !!sym(fill)) +
       ggplot2::scale_fill_manual(values = group_colors, na.value = na_color)
   } else {
-    stop("Hhhhmmm, this shouldn't happen! Please raise an issue at https://github.com/reconverse/incidence2/issues")
+    abort("Hhhhmmm, this shouldn't happen! Please raise an issue at https://github.com/reconverse/incidence2/issues")
   }
 
   if (show_cases && (stack == TRUE || is.null(fill))) {
@@ -368,13 +332,53 @@ plot_basic <- function(x, count, fill = NULL, stack = TRUE,
     out <- out + squares + ggplot2::coord_equal()
   }
 
-  if (is.null(title)) {
-    out
+  if (!is.null(title)) out <- out + ggplot2::labs(title = title)
+
+  if (inherits(d, "grates_yearweek")) {
+    if (centre_dates) date_format <- NULL
+    out <- out + grates::scale_x_grates_yearweek(
+      n.breaks = n.breaks,
+      firstday = grates::get_firstday(d),
+      format = date_format
+    )
+  } else if (inherits(d, "grates_quarter")) {
+    if (centre_dates) date_format <- NULL
+    out <- out + grates::scale_x_grates_quarter(
+      n.breaks = n.breaks,
+      format = date_format
+    )
+  } else if (inherits(d, "grates_month")) {
+    if (centre_dates && attr(d, "n") == 1) date_format <- NULL
+    out <- out + grates::scale_x_grates_month(
+      n.breaks = n.breaks,
+      format = date_format,
+      n = attr(d, "n"),
+      origin = as.numeric(min(d))
+    )
+  } else if (inherits(d, "grates_year")) {
+    out <- out + grates::scale_x_grates_year(n.breaks = n.breaks)
+  } else if (inherits(d, "grates_int_period")) {
+    out <- out + grates::scale_x_grates_int_period(
+      n.breaks = n.breaks,
+      n = attr(d, "n"),
+      origin = as.numeric(min(d))
+    )
+  } else if (inherits(d, "grates_period")) {
+    out <- out + grates::scale_x_grates_period(
+      n.breaks = n.breaks,
+      format = date_format,
+      n = attr(d, "n"),
+      origin = as.numeric(min(d))
+    )
+  } else if (inherits(d, "Date")) {
+    out <-  out + ggplot2::scale_x_date(breaks = scales::pretty_breaks(n = n.breaks), ...)
+  } else if (inherits(d, "integer")) {
+    out <- out + ggplot2::scale_x_continuous(breaks = scales::pretty_breaks(n = n.breaks), ...)
   } else {
-    out + ggplot2::labs(title = title)
+    abort("Something has gone wrong! Please let the incidence2 devs know.")
   }
 
-
+  out
 }
 
 
@@ -386,17 +390,13 @@ ylabel <- function(x, ylab) {
     n <- get_interval_number(interval)
     date_vars <- get_dates_name(x)
 
-    if (is_int_period(get_dates(x))) {
+    if (grates::is_int_period(get_dates(x))) {
       ylab <- sprintf("incidence by period of %d", interval)
     } else if (is.character(interval)) {
       if (interval == "1 day") {
         ylab <- "daily incidence"
-      } else if (type == "day") {
-        if (n == 7) {
-          ylab <- "weekly incidence"
-        } else {
-          ylab <- sprintf("incidence by period of %s", interval)
-        }
+      } else if (type == "period") {
+        ylab <- sprintf("incidence by period of %d days", n)
       } else if (n == 1) {
         ylab <- sprintf("%sly incidence", type)
       } else {

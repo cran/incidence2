@@ -7,40 +7,40 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 
-## ---- data--------------------------------------------------------------------
+## ----data, message = FALSE----------------------------------------------------
 library(outbreaks)
 library(incidence2)
-library(magrittr)
 
 dat <- ebola_sim_clean$linelist
 str(dat)
 
-i <- incidence(dat, date_index = date_of_onset, interval = 7,
-               groups = c(gender, hospital))
+i <- incidence(dat, date_of_onset, interval = 7, groups = c(gender, hospital))
 i
 
 ## ---- plot1-------------------------------------------------------------------
-i %>% plot()
+plot(i)
 
 ## ---- plot2-------------------------------------------------------------------
-i %>% plot(color = "white")
+plot(i, color = "white")
 
 ## ---- fill--------------------------------------------------------------------
-i %>% plot(fill = gender)
-i %>% plot(fill = hospital, legend = "bottom")
-i %>% regroup() %>% plot(fill = "red", color = "white")
+plot(i, fill = gender)
+plot(i, fill = hospital, legend = "bottom")
+ii <- regroup(i)
+plot(ii, fill = "red", color = "white")
 
 ## ---- rotateandformat---------------------------------------------------------
-i %>% plot(angle = 45)
+plot(i, angle = 45)
 
 ## ---- epiet-------------------------------------------------------------------
 i_epiet <- incidence(dat[160:180, ], date_index = date_of_onset)
-i_epiet %>% plot(color = "white", show_cases = TRUE, angle = 45, size = 10, n_breaks = 20)
+plot(i_epiet, color = "white", show_cases = TRUE, angle = 45, size = 10, n.breaks = 20)
 
 ## ---- facets------------------------------------------------------------------
-i %>% facet_plot(facets = gender, n_breaks = 3)
-i %>% facet_plot(facets = hospital, fill = gender, n_breaks = 3, nrow = 4)
-i %>% regroup(gender) %>% facet_plot(facets = gender, fill = "grey", color = "white")
+facet_plot(i, facets = gender, n.breaks = 3)
+facet_plot(i, facets = hospital, fill = gender, n.breaks = 3, nrow = 4)
+ii <- regroup(i, gender)
+facet_plot(ii, facets = gender, fill = "grey", color = "white")
 
 ## ---- vibrant,   fig.height = 8-----------------------------------------------
 par(mfrow = c(2, 1), mar = c(4,2,1,1))
@@ -53,6 +53,8 @@ barplot(1:9, col = muted(9))
 barplot(1:20, col = muted(20))
 
 ## ---- palettes----------------------------------------------------------------
-i %>% regroup(hospital) %>% plot(fill = hospital, col_pal = rainbow, n_breaks = 3) # see ?rainbow
-i %>% regroup(gender) %>% plot(fill = gender, col_pal = cm.colors)   # see ?cm.colors
+ih <- regroup(i, hospital)
+plot(ih, fill = hospital, col_pal = rainbow, n.breaks = 3) # see ?rainbow
+ig <- regroup(i, gender)
+plot(ig, fill = gender, col_pal = cm.colors)   # see ?cm.colors
 

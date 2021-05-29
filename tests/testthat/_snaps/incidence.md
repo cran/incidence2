@@ -69,8 +69,8 @@
     interval: 17 days
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
+                     date_index count
+                       <period> <int>
      1 2020-01-01 to 2020-01-17    17
      2 2020-01-18 to 2020-02-03    17
      3 2020-02-04 to 2020-02-20    17
@@ -101,8 +101,8 @@
     interval: 17 days
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
+                     date_index count
+                       <period> <int>
      1 2020-01-01 to 2020-01-17    17
      2 2020-01-18 to 2020-02-03    17
      3 2020-02-04 to 2020-02-20    17
@@ -130,21 +130,21 @@
 
     An incidence2 object: 105 x 2
     731 cases from 2020-W01 to 2022-W01
-    interval: 1 wednesday week
+    interval: 1 (Wednesday) week 
     cumulative: FALSE
     
        date_index count
-       <yrwk>     <int>
-     1 2020-W01       7
-     2 2020-W02       7
-     3 2020-W03       7
-     4 2020-W04       7
-     5 2020-W05       7
-     6 2020-W06       7
-     7 2020-W07       7
-     8 2020-W08       7
-     9 2020-W09       7
-    10 2020-W10       7
+           <yrwk> <int>
+     1   2020-W01     7
+     2   2020-W02     7
+     3   2020-W03     7
+     4   2020-W04     7
+     5   2020-W05     7
+     6   2020-W06     7
+     7   2020-W07     7
+     8   2020-W08     7
+     9   2020-W09     7
+    10   2020-W10     7
     # ... with 95 more rows
     
 
@@ -152,7 +152,7 @@
 
     An incidence2 object: 105 x 2
     731 cases from 2020-W01 to 2022-W01
-    interval: 1 wednesday week
+    interval: 1 (Wednesday) week 
     cumulative: FALSE
     timespan: 735 days
     
@@ -162,26 +162,26 @@
 
     An incidence2 object: 8 x 4
     56 cases from 2021-W05 to 2021-W08
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     
       date_index height size  count
-      <yrwk>     <chr>  <chr> <int>
-    1 2021-W05   short  small     7
-    2 2021-W05   tall   small     7
-    3 2021-W06   short  large     7
-    4 2021-W06   tall   large     7
-    5 2021-W07   short  large     7
-    6 2021-W07   tall   large     7
-    7 2021-W08   short  large     7
-    8 2021-W08   tall   large     7
+          <yrwk> <chr>  <chr> <int>
+    1   2021-W05 short  small     7
+    2   2021-W05 tall   small     7
+    3   2021-W06 short  large     7
+    4   2021-W06 tall   large     7
+    5   2021-W07 short  large     7
+    6   2021-W07 tall   large     7
+    7   2021-W08 short  large     7
+    8   2021-W08 tall   large     7
     
 
 ---
 
     An incidence2 object: 8 x 4
     56 cases from 2021-W05 to 2021-W08
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     timespan: 28 days
     
@@ -205,26 +205,26 @@
 
     An incidence2 object: 8 x 4
     84 cases from 2021-W05 to 2021-W08
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     
       date_index height size  count
-      <yrwk>     <chr>  <chr> <int>
-    1 2021-W05   short  small     7
-    2 2021-W05   tall   small     7
-    3 2021-W06   short  large     7
-    4 2021-W06   tall   large     7
-    5 2021-W07   short  large    14
-    6 2021-W07   tall   large    14
-    7 2021-W08   short  large    14
-    8 2021-W08   tall   large    14
+          <yrwk> <chr>  <chr> <int>
+    1   2021-W05 short  small     7
+    2   2021-W05 tall   small     7
+    3   2021-W06 short  large     7
+    4   2021-W06 tall   large     7
+    5   2021-W07 short  large    14
+    6   2021-W07 tall   large    14
+    7   2021-W08 short  large    14
+    8   2021-W08 tall   large    14
     
 
 ---
 
     An incidence2 object: 8 x 4
     84 cases from 2021-W05 to 2021-W08
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     timespan: 28 days
     
@@ -248,21 +248,21 @@
 
     An incidence2 object: 105 x 2
     1096 cases from 2020-W01 to 2022-W01
-    interval: 1 wednesday week
+    interval: 1 (Wednesday) week 
     cumulative: FALSE
     
        date_index count
-       <yrwk>     <int>
-     1 2020-W01       7
-     2 2020-W02       7
-     3 2020-W03       7
-     4 2020-W04       7
-     5 2020-W05       7
-     6 2020-W06       7
-     7 2020-W07       7
-     8 2020-W08       7
-     9 2020-W09       7
-    10 2020-W10       7
+           <yrwk> <int>
+     1   2020-W01     7
+     2   2020-W02     7
+     3   2020-W03     7
+     4   2020-W04     7
+     5   2020-W05     7
+     6   2020-W06     7
+     7   2020-W07     7
+     8   2020-W08     7
+     9   2020-W09     7
+    10   2020-W10     7
     # ... with 95 more rows
     
 
@@ -270,7 +270,7 @@
 
     An incidence2 object: 105 x 2
     1096 cases from 2020-W01 to 2022-W01
-    interval: 1 wednesday week
+    interval: 1 (Wednesday) week 
     cumulative: FALSE
     timespan: 735 days
     
@@ -280,11 +280,11 @@
 
     An incidence2 object: 53 x 2
     731 cases from 2020-01-01 to 2022-01-11
-    interval: 2 wednesday weeks
+    interval: 14 days
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
+                     date_index count
+                       <period> <int>
      1 2020-01-01 to 2020-01-14    14
      2 2020-01-15 to 2020-01-28    14
      3 2020-01-29 to 2020-02-11    14
@@ -302,7 +302,7 @@
 
     An incidence2 object: 53 x 2
     731 cases from 2020-01-01 to 2022-01-11
-    interval: 2 wednesday weeks
+    interval: 14 days
     cumulative: FALSE
     timespan: 742 days
     
@@ -312,11 +312,11 @@
 
     An incidence2 object: 53 x 2
     1096 cases from 2020-01-01 to 2022-01-11
-    interval: 2 wednesday weeks
+    interval: 14 days
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
+                     date_index count
+                       <period> <int>
      1 2020-01-01 to 2020-01-14    14
      2 2020-01-15 to 2020-01-28    14
      3 2020-01-29 to 2020-02-11    14
@@ -334,7 +334,7 @@
 
     An incidence2 object: 53 x 2
     1096 cases from 2020-01-01 to 2022-01-11
-    interval: 2 wednesday weeks
+    interval: 14 days
     cumulative: FALSE
     timespan: 742 days
     
@@ -344,21 +344,21 @@
 
     An incidence2 object: 105 x 2
     731 cases from 2020-W01 to 2021-W52
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     
        date_index count
-       <yrwk>     <int>
-     1 2020-W01       5
-     2 2020-W02       7
-     3 2020-W03       7
-     4 2020-W04       7
-     5 2020-W05       7
-     6 2020-W06       7
-     7 2020-W07       7
-     8 2020-W08       7
-     9 2020-W09       7
-    10 2020-W10       7
+           <yrwk> <int>
+     1   2020-W01     5
+     2   2020-W02     7
+     3   2020-W03     7
+     4   2020-W04     7
+     5   2020-W05     7
+     6   2020-W06     7
+     7   2020-W07     7
+     8   2020-W08     7
+     9   2020-W09     7
+    10   2020-W10     7
     # ... with 95 more rows
     
 
@@ -366,7 +366,7 @@
 
     An incidence2 object: 105 x 2
     731 cases from 2020-W01 to 2021-W52
-    interval: 1 monday week
+    interval: 1 (Monday) week 
     cumulative: FALSE
     timespan: 735 days
     
@@ -380,17 +380,17 @@
     cumulative: FALSE
     
        date_index count
-       <yrmon>    <int>
-     1 2020-Jan      31
-     2 2020-Feb      29
-     3 2020-Mar      31
-     4 2020-Apr      30
-     5 2020-May      31
-     6 2020-Jun      30
-     7 2020-Jul      31
-     8 2020-Aug      31
-     9 2020-Sep      30
-    10 2020-Oct      31
+           <mnth> <int>
+     1   2020-Jan    31
+     2   2020-Feb    29
+     3   2020-Mar    31
+     4   2020-Apr    30
+     5   2020-May    31
+     6   2020-Jun    30
+     7   2020-Jul    31
+     8   2020-Aug    31
+     9   2020-Sep    30
+    10   2020-Oct    31
     # ... with 14 more rows
     
 
@@ -412,17 +412,17 @@
     cumulative: FALSE
     
        date_index count
-       <yrmon>    <int>
-     1 2020-Jan      31
-     2 2020-Feb      29
-     3 2020-Mar      31
-     4 2020-Apr      30
-     5 2020-May      31
-     6 2020-Jun      30
-     7 2020-Jul      31
-     8 2020-Aug      31
-     9 2020-Sep      30
-    10 2020-Oct      31
+           <mnth> <int>
+     1   2020-Jan    31
+     2   2020-Feb    29
+     3   2020-Mar    31
+     4   2020-Apr    30
+     5   2020-May    31
+     6   2020-Jun    30
+     7   2020-Jul    31
+     8   2020-Aug    31
+     9   2020-Sep    30
+    10   2020-Oct    31
     # ... with 14 more rows
     
 
@@ -443,20 +443,20 @@
     interval: 2 months
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
-     1 2020-01-01 to 2020-02-29    60
-     2 2020-03-01 to 2020-04-30    61
-     3 2020-05-01 to 2020-06-30    61
-     4 2020-07-01 to 2020-08-31    62
-     5 2020-09-01 to 2020-10-31    61
-     6 2020-11-01 to 2020-12-31    61
-     7 2021-01-01 to 2021-02-28    59
-     8 2021-03-01 to 2021-04-30    61
-     9 2021-05-01 to 2021-06-30    61
-    10 2021-07-01 to 2021-08-31    62
-    11 2021-09-01 to 2021-10-31    61
-    12 2021-11-01 to 2021-12-31    61
+                 date_index count
+                     <mnth> <int>
+     1 2020-Jan to 2020-Feb    60
+     2 2020-Mar to 2020-Apr    61
+     3 2020-May to 2020-Jun    61
+     4 2020-Jul to 2020-Aug    62
+     5 2020-Sep to 2020-Oct    61
+     6 2020-Nov to 2020-Dec    61
+     7 2021-Jan to 2021-Feb    59
+     8 2021-Mar to 2021-Apr    61
+     9 2021-May to 2021-Jun    61
+    10 2021-Jul to 2021-Aug    62
+    11 2021-Sep to 2021-Oct    61
+    12 2021-Nov to 2021-Dec    61
     
 
 ---
@@ -476,20 +476,20 @@
     interval: 2 months
     cumulative: FALSE
     
-       date_index               count
-       <period>                 <int>
-     1 2020-01-01 to 2020-02-29    60
-     2 2020-03-01 to 2020-04-30    61
-     3 2020-05-01 to 2020-06-30    61
-     4 2020-07-01 to 2020-08-31    62
-     5 2020-09-01 to 2020-10-31    61
-     6 2020-11-01 to 2020-12-31    61
-     7 2021-01-01 to 2021-02-28   118
-     8 2021-03-01 to 2021-04-30   122
-     9 2021-05-01 to 2021-06-30   122
-    10 2021-07-01 to 2021-08-31   124
-    11 2021-09-01 to 2021-10-31   122
-    12 2021-11-01 to 2021-12-31   122
+                 date_index count
+                     <mnth> <int>
+     1 2020-Jan to 2020-Feb    60
+     2 2020-Mar to 2020-Apr    61
+     3 2020-May to 2020-Jun    61
+     4 2020-Jul to 2020-Aug    62
+     5 2020-Sep to 2020-Oct    61
+     6 2020-Nov to 2020-Dec    61
+     7 2021-Jan to 2021-Feb   118
+     8 2021-Mar to 2021-Apr   122
+     9 2021-May to 2021-Jun   122
+    10 2021-Jul to 2021-Aug   124
+    11 2021-Sep to 2021-Oct   122
+    12 2021-Nov to 2021-Dec   122
     
 
 ---
@@ -510,15 +510,15 @@
     cumulative: FALSE
     
       date_index count
-      <yrqtr>    <int>
-    1 2020-Q1       91
-    2 2020-Q2       91
-    3 2020-Q3       92
-    4 2020-Q4       92
-    5 2021-Q1       90
-    6 2021-Q2       91
-    7 2021-Q3       92
-    8 2021-Q4       92
+           <qtr> <int>
+    1    2020-Q1    91
+    2    2020-Q2    91
+    3    2020-Q3    92
+    4    2020-Q4    92
+    5    2021-Q1    90
+    6    2021-Q2    91
+    7    2021-Q3    92
+    8    2021-Q4    92
     
 
 ---
@@ -539,15 +539,15 @@
     cumulative: FALSE
     
       date_index count
-      <yrqtr>    <int>
-    1 2020-Q1       91
-    2 2020-Q2       91
-    3 2020-Q3       92
-    4 2020-Q4       92
-    5 2021-Q1      180
-    6 2021-Q2      182
-    7 2021-Q3      184
-    8 2021-Q4      184
+           <qtr> <int>
+    1    2020-Q1    91
+    2    2020-Q2    91
+    3    2020-Q3    92
+    4    2020-Q4    92
+    5    2021-Q1   180
+    6    2021-Q2   182
+    7    2021-Q3   184
+    8    2021-Q4   184
     
 
 ---
@@ -555,56 +555,6 @@
     An incidence2 object: 8 x 2
     1096 cases from 2020-Q1 to 2021-Q4
     interval: 1 quarter
-    cumulative: FALSE
-    timespan: 731 days
-    
-    
-
-# multi-quarter, no groupings and without count work as expected
-
-    An incidence2 object: 4 x 2
-    731 cases from 2020-01-01 to 2021-12-31
-    interval: 2 quarters
-    cumulative: FALSE
-    
-      date_index               count
-      <period>                 <int>
-    1 2020-01-01 to 2020-06-30   182
-    2 2020-07-01 to 2020-12-31   184
-    3 2021-01-01 to 2021-06-30   181
-    4 2021-07-01 to 2021-12-31   184
-    
-
----
-
-    An incidence2 object: 4 x 2
-    731 cases from 2020-01-01 to 2021-12-31
-    interval: 2 quarters
-    cumulative: FALSE
-    timespan: 731 days
-    
-    
-
-# multi-quarter, no groupings and with count work as expected
-
-    An incidence2 object: 4 x 2
-    1096 cases from 2020-01-01 to 2021-12-31
-    interval: 2 quarters
-    cumulative: FALSE
-    
-      date_index               count
-      <period>                 <int>
-    1 2020-01-01 to 2020-06-30   182
-    2 2020-07-01 to 2020-12-31   184
-    3 2021-01-01 to 2021-06-30   362
-    4 2021-07-01 to 2021-12-31   368
-    
-
----
-
-    An incidence2 object: 4 x 2
-    1096 cases from 2020-01-01 to 2021-12-31
-    interval: 2 quarters
     cumulative: FALSE
     timespan: 731 days
     
@@ -618,9 +568,9 @@
     cumulative: FALSE
     
       date_index count
-      <yr>       <int>
-    1 2020         366
-    2 2021         365
+          <year> <int>
+    1       2020   366
+    2       2021   365
     
 
 ---
@@ -641,9 +591,9 @@
     cumulative: FALSE
     
       date_index count
-      <yr>       <int>
-    1 2020         366
-    2 2021         730
+          <year> <int>
+    1       2020   366
+    2       2021   730
     
 
 ---
@@ -651,50 +601,6 @@
     An incidence2 object: 2 x 2
     1096 cases from 2020 to 2021
     interval: 1 year
-    cumulative: FALSE
-    timespan: 731 days
-    
-    
-
-# multi-year, no groupings and without count work as expected
-
-    An incidence2 object: 1 x 2
-    731 cases from 2020-01-01 to 2021-12-31
-    interval: 2 years
-    cumulative: FALSE
-    
-      date_index               count
-      <period>                 <int>
-    1 2020-01-01 to 2021-12-31   731
-    
-
----
-
-    An incidence2 object: 1 x 2
-    731 cases from 2020-01-01 to 2021-12-31
-    interval: 2 years
-    cumulative: FALSE
-    timespan: 731 days
-    
-    
-
-# multi-year, no groupings and with count work as expected
-
-    An incidence2 object: 1 x 2
-    1096 cases from 2020-01-01 to 2021-12-31
-    interval: 2 years
-    cumulative: FALSE
-    
-      date_index               count
-      <period>                 <int>
-    1 2020-01-01 to 2021-12-31  1096
-    
-
----
-
-    An incidence2 object: 1 x 2
-    1096 cases from 2020-01-01 to 2021-12-31
-    interval: 2 years
     cumulative: FALSE
     timespan: 731 days
     
@@ -708,9 +614,9 @@
     cumulative: FALSE
     
       date_index count
-      <int_perd> <int>
-    1 1 - 5          5
-    2 6 - 10         5
+        <period> <int>
+    1     1 to 5     5
+    2    6 to 10     5
     
 
 ---
@@ -731,9 +637,9 @@
     cumulative: FALSE
     
       date_index count
-      <int_perd> <dbl>
-    1 1 - 5          5
-    2 6 - 10        10
+        <period> <dbl>
+    1     1 to 5     5
+    2    6 to 10    10
     
 
 ---
@@ -755,20 +661,20 @@
     cumulative: FALSE
     
        date_index deaths onset
-       <yrmon>     <int> <int>
-     1 2020-Dec        0    31
-     2 2021-Jan       31    31
-     3 2021-Feb       28    28
-     4 2021-Mar       31    31
-     5 2021-Apr       30    30
-     6 2021-May       31    31
-     7 2021-Jun       30    30
-     8 2021-Jul       31    31
-     9 2021-Aug       31    31
-    10 2021-Sep       30    30
-    11 2021-Oct       31    31
-    12 2021-Nov       30    30
-    13 2021-Dec       31     0
+           <mnth>  <int> <int>
+     1   2020-Dec      0    31
+     2   2021-Jan     31    31
+     3   2021-Feb     28    28
+     4   2021-Mar     31    31
+     5   2021-Apr     30    30
+     6   2021-May     31    31
+     7   2021-Jun     30    30
+     8   2021-Jul     31    31
+     9   2021-Aug     31    31
+    10   2021-Sep     30    30
+    11   2021-Oct     31    31
+    12   2021-Nov     30    30
+    13   2021-Dec     31     0
     
 
 ---
