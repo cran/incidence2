@@ -58,16 +58,16 @@ the \code{date_index} column is Date, POSIXct, POSIXlt, or character and integer
 otherwise.}
 }
 \value{
-An incidence2 object.  This is a subclass of tibble that represents
-and aggregated count of observations grouped according to the specified
-interval and, optionally, the given groups.  By default it will contain the
-following columns:
+An \code{incidence2} object.  This is a subclass of
+\code{\link[=build_incidence]{incidence_df}} and aggregated count of observations
+grouped according to the specified interval and, optionally, the given
+groups.  By default it will contain the following columns:
 \itemize{
 \item \strong{date} / \strong{date_index}:  If the default interval of 1 day is used then
 this will be the dates of the given observations and given the name
 "date", otherwise, this will be values obtained from the specified date
 grouping with column name "date_index" (See Interval specification below).
-\item \strong{groups}: If specified, column(s) containing the categories of the
+\item \strong{groups} (if specified): Column(s) containing the categories of the
 given groups.
 \item \strong{count} (or name of count variables): The aggregated observation counts.
 }
@@ -85,7 +85,7 @@ format. Any other format will trigger an error.
 }
 
 \subsection{Interval specification (\code{interval})}{
-\code{incidence2} uses the \href{https://cran.r-project.org/package=grates}{\code{grates}}
+\code{incidence()} uses the \href{https://cran.r-project.org/package=grates}{\code{grates}}
 package to generate date groupings. The grouping used depends on the value
 of \code{interval}. This can be specified as either an integer value or a more
 standard specification such as "day", "week", "month", "quarter" or "year".

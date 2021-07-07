@@ -353,7 +353,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h2>Modifying incidence objects</h2>
 <div id="regroup" class="section level3">
 <h3><code>regroup()</code></h3>
-<p>Sometimes you may find you’ve created a grouped <code>incidence()</code> but now want to change the internal grouping. Assuming you are after a subset of the grouping already generated, then you can use to <code>regroup()</code> function to get the desired aggregation:</p>
+<p>Sometimes you may find you’ve created a grouped incidence but now want to change the internal grouping. Assuming you are after a subset of the grouping already generated, then you can use to <code>regroup()</code> function to get the desired aggregation:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(outbreaks)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(incidence2)</span>
@@ -364,10 +364,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="co"># generate the incidence object with 3 groups</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>inci &lt;-<span class="st"> </span><span class="kw">incidence</span>(dat, date_of_onset, <span class="dt">groups =</span> <span class="kw">c</span>(gender, hospital, outcome), <span class="dt">interval =</span> <span class="st">&quot;week&quot;</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>inci</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 1,448 x 5</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 1,448 x 5</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="co">#&gt;    date_index gender hospital                                     outcome count</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;  &lt;fct&gt;                                        &lt;fct&gt;   &lt;int&gt;</span></span>
@@ -385,10 +385,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a><span class="co"># regroup to just two groups</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>(<span class="kw">c</span>(gender, outcome))</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 320 x 4</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 320 x 4</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true"></a><span class="co">#&gt;    date_index gender outcome count</span></span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;  &lt;fct&gt;   &lt;int&gt;</span></span>
@@ -406,10 +406,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-50"><a href="#cb1-50" aria-hidden="true"></a></span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true"></a><span class="co"># drop all groups</span></span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">regroup</span>()</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 56 x 2</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 56 x 2</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb1-57"><a href="#cb1-57" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb1-58"><a href="#cb1-58" aria-hidden="true"></a><span class="co">#&gt;    date_index count</span></span>
 <span id="cb1-59"><a href="#cb1-59" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;int&gt;</span></span>
@@ -429,10 +429,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3><code>keep_first()</code> and <code>keep_last()</code></h3>
 <p>Once your data is grouped by date, you may want to select the first or last few entries based on a particular date grouping using <code>keep_first()</code> and <code>keep_last()</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">keep_first</span>(<span class="dv">3</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 6 x 5</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt; 7 cases from 2014-W15 to 2014-W17</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 6 x 5</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2014-W17]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co">#&gt; cases: 7</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">#&gt;   date_index gender hospital           outcome count</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="co">#&gt;       &lt;yrwk&gt; &lt;fct&gt;  &lt;fct&gt;              &lt;fct&gt;   &lt;int&gt;</span></span>
@@ -443,10 +443,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a><span class="co">#&gt; 5   2014-W17 f      other              Recover     2</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a><span class="co">#&gt; 6   2014-W17 m      other              Recover     1</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">keep_last</span>(<span class="dv">3</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 63 x 5</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a><span class="co">#&gt; 103 cases from 2015-W16 to 2015-W18</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 63 x 5</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a><span class="co">#&gt; date range: [2015-W16] to [2015-W18]</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a><span class="co">#&gt; cases: 103</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a><span class="co">#&gt;    date_index gender hospital           outcome count</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;  &lt;fct&gt;              &lt;fct&gt;   &lt;int&gt;</span></span>
@@ -464,7 +464,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="tidyverse-compatibility" class="section level3">
 <h3>Tidyverse compatibility</h3>
-<p>incidence2 has been written with <em>tidyverse</em> compatibility (in particular <a href="https://dplyr.tidyverse.org/">dplyr</a>) at the forefront of the design choices we have made. By this we mean that if an operation from dplyr is applied to an <code>incidence()</code> object then as long as the invariants of the object are preserved (i.e. groups, interval and uniqueness of rows) then the object returned will be an <code>incidence()</code> object. If the invariants are not preserved then a tibble will be returned instead.</p>
+<p>incidence2 has been written with <em>tidyverse</em> compatibility (in particular <a href="https://dplyr.tidyverse.org/">dplyr</a>) at the forefront of the design choices we have made. By this we mean that if an operation from dplyr is applied to an incidence object then as long as the invariants of the object are preserved (i.e. groups, interval and uniqueness of rows) then the object returned will be an incidence object. If the invariants are not preserved then a tibble will be returned instead.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co"># create incidence object</span></span>
@@ -472,10 +472,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co"># filtering preserves class</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">filter</span>(gender <span class="op">==</span><span class="st"> &quot;f&quot;</span>, hospital <span class="op">==</span><span class="st"> &quot;Rokupa Hospital&quot;</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 48 x 4</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt; 210 cases from 2014-W18 to 2015-W18</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 48 x 4</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W18] to [2015-W18]</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="co">#&gt; cases: 210</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital        gender count</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;           &lt;fct&gt;  &lt;int&gt;</span></span>
@@ -493,29 +493,29 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a><span class="co"># slice operations preserve class</span></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice_sample</span>(<span class="dt">n =</span> <span class="dv">10</span>)</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 10 x 4</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">#&gt; 187 cases from 2014-W21 to 2015-W08</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 10 x 4</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W28] to [2015-W16]</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a><span class="co">#&gt; cases: 101</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a><span class="co">#&gt; </span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital           gender count</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;              &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a><span class="co">#&gt;  1   2014-W39 Connaught Hospital f         57</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="co">#&gt;  2   2014-W31 other              m          4</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="co">#&gt;  3   2014-W44 Rokupa Hospital    f          9</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="co">#&gt;  4   2014-W32 other              m         12</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="co">#&gt;  5   2014-W47 other              m         20</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="co">#&gt;  6   2015-W08 &lt;NA&gt;               f         13</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="co">#&gt;  7   2014-W41 Rokupa Hospital    f         10</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="co">#&gt;  8   2014-W34 Connaught Hospital f         21</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a><span class="co">#&gt;  9   2014-W21 &lt;NA&gt;               f          2</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a><span class="co">#&gt; 10   2014-W42 &lt;NA&gt;               f         39</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital                                     gender count</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a><span class="co">#&gt;  1   2014-W47 Connaught Hospital                           m         29</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="co">#&gt;  2   2015-W07 &lt;NA&gt;                                         f          8</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="co">#&gt;  3   2014-W29 Princess Christian Maternity Hospital (PCMH) f          6</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="co">#&gt;  4   2014-W43 other                                        m         19</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="co">#&gt;  5   2014-W28 &lt;NA&gt;                                         m          7</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="co">#&gt;  6   2014-W46 Rokupa Hospital                              m         13</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="co">#&gt;  7   2015-W16 Military Hospital                            m          2</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="co">#&gt;  8   2014-W51 Military Hospital                            f          7</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a><span class="co">#&gt;  9   2014-W47 Rokupa Hospital                              m          6</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a><span class="co">#&gt; 10   2014-W28 Rokupa Hospital                              f          4</span></span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true"></a></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 3 x 4</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true"></a><span class="co">#&gt; 3 cases from 2014-W15 to 2014-W19</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 3 x 4</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2014-W19]</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true"></a><span class="co">#&gt; cases: 3</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-53"><a href="#cb3-53" aria-hidden="true"></a><span class="co">#&gt;   date_index hospital          gender count</span></span>
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true"></a><span class="co">#&gt;       &lt;yrwk&gt; &lt;fct&gt;             &lt;fct&gt;  &lt;int&gt;</span></span>
@@ -525,10 +525,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-58"><a href="#cb3-58" aria-hidden="true"></a></span>
 <span id="cb3-59"><a href="#cb3-59" aria-hidden="true"></a><span class="co"># mutate preserve class</span></span>
 <span id="cb3-60"><a href="#cb3-60" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">future =</span> date_index <span class="op">+</span><span class="st"> </span><span class="dv">999</span>)</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 601 x 5</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 601 x 5</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-65"><a href="#cb3-65" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-66"><a href="#cb3-66" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital                                     gender count   future</span></span>
 <span id="cb3-67"><a href="#cb3-67" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;   &lt;yrwk&gt;</span></span>
@@ -546,10 +546,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-79"><a href="#cb3-79" aria-hidden="true"></a></span>
 <span id="cb3-80"><a href="#cb3-80" aria-hidden="true"></a><span class="co"># rename preserve class</span></span>
 <span id="cb3-81"><a href="#cb3-81" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">rename</span>(<span class="dt">left_bin =</span> date_index)</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 601 x 4</span></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 601 x 4</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-86"><a href="#cb3-86" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-87"><a href="#cb3-87" aria-hidden="true"></a><span class="co">#&gt;    left_bin hospital                                     gender count</span></span>
 <span id="cb3-88"><a href="#cb3-88" aria-hidden="true"></a><span class="co">#&gt;      &lt;yrwk&gt; &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
@@ -583,10 +583,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-116"><a href="#cb3-116" aria-hidden="true"></a><span class="co">#&gt; # … with 591 more rows</span></span>
 <span id="cb3-117"><a href="#cb3-117" aria-hidden="true"></a></span>
 <span id="cb3-118"><a href="#cb3-118" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="kw">everything</span>())</span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true"></a><span class="co">#&gt; An incidence2 object: 601 x 4</span></span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true"></a><span class="co">#&gt; 5829 cases from 2014-W15 to 2015-W18</span></span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true"></a><span class="co">#&gt; cumulative: FALSE</span></span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 601 x 4</span></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W15] to [2015-W18]</span></span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true"></a><span class="co">#&gt; cases: 5829</span></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-123"><a href="#cb3-123" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-124"><a href="#cb3-124" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital                                     gender count</span></span>
 <span id="cb3-125"><a href="#cb3-125" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
