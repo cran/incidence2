@@ -494,22 +494,22 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a><span class="co"># slice operations preserve class</span></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice_sample</span>(<span class="dt">n =</span> <span class="dv">10</span>)</span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 10 x 4</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W28] to [2015-W16]</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a><span class="co">#&gt; cases: 101</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">#&gt; date range: [2014-W36] to [2015-W18]</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a><span class="co">#&gt; cases: 51</span></span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a><span class="co">#&gt; interval: 1 (Monday) week </span></span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a><span class="co">#&gt; </span></span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a><span class="co">#&gt;    date_index hospital                                     gender count</span></span>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a><span class="co">#&gt;        &lt;yrwk&gt; &lt;fct&gt;                                        &lt;fct&gt;  &lt;int&gt;</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a><span class="co">#&gt;  1   2014-W47 Connaught Hospital                           m         29</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="co">#&gt;  2   2015-W07 &lt;NA&gt;                                         f          8</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="co">#&gt;  3   2014-W29 Princess Christian Maternity Hospital (PCMH) f          6</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="co">#&gt;  4   2014-W43 other                                        m         19</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="co">#&gt;  5   2014-W28 &lt;NA&gt;                                         m          7</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="co">#&gt;  6   2014-W46 Rokupa Hospital                              m         13</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="co">#&gt;  7   2015-W16 Military Hospital                            m          2</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="co">#&gt;  8   2014-W51 Military Hospital                            f          7</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a><span class="co">#&gt;  9   2014-W47 Rokupa Hospital                              m          6</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a><span class="co">#&gt; 10   2014-W28 Rokupa Hospital                              f          4</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a><span class="co">#&gt;  1   2015-W03 Princess Christian Maternity Hospital (PCMH) m          2</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="co">#&gt;  2   2015-W16 &lt;NA&gt;                                         f          9</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="co">#&gt;  3   2014-W41 other                                        m         19</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="co">#&gt;  4   2015-W18 Rokupa Hospital                              m          1</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="co">#&gt;  5   2015-W04 Rokupa Hospital                              m          7</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="co">#&gt;  6   2015-W12 Rokupa Hospital                              f          2</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="co">#&gt;  7   2014-W48 Rokupa Hospital                              m          1</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="co">#&gt;  8   2014-W36 Rokupa Hospital                              m          4</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a><span class="co">#&gt;  9   2015-W16 other                                        f          4</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a><span class="co">#&gt; 10   2015-W07 Princess Christian Maternity Hospital (PCMH) f          2</span></span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true"></a></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true"></a>inci <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>)</span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a><span class="co">#&gt; An incidence object: 3 x 4</span></span>
