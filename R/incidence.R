@@ -149,6 +149,8 @@
 incidence <- function(x, date_index, groups = NULL, interval = 1L,
                       na_as_group = TRUE, counts = NULL, firstdate = NULL) {
 
+  # convert data.table inputs to data frame
+  if (inherits(x, "data.table")) x <- as.data.frame(x)
 
   en_date <- rlang::enexpr(date_index)
   en_groups <- rlang::enexpr(groups)
@@ -208,9 +210,13 @@ check_dates <- function(x) {
   x
 }
 
+# ------------------------------------------------------------------------- #
+
 create_interval_string <- function(x) {
   UseMethod("create_interval_string")
 }
+
+# ------------------------------------------------------------------------- #
 
 create_interval_string.default <- function(x) {
   abort(
@@ -218,10 +224,14 @@ create_interval_string.default <- function(x) {
   )
 }
 
+# ------------------------------------------------------------------------- #
+
 create_interval_string.grates_month <- function(x) {
   n <- grates::get_n(x)
   if (n > 1) sprintf("%d months", n) else "1 month"
 }
+
+# ------------------------------------------------------------------------- #
 
 create_interval_string.grates_yearweek <- function(x) {
   firstday <- grates::get_firstday(x)
@@ -229,19 +239,41 @@ create_interval_string.grates_yearweek <- function(x) {
   sprintf("1 (%s) week ", weekday)
 }
 
-create_interval_string.grates_quarter <- function(x) "1 quarter"
+# ------------------------------------------------------------------------- #
 
-create_interval_string.grates_year <- function(x) "1 year"
+create_interval_string.grates_quarter <- function(x) {
+  "1 quarter"
+}
+
+# ------------------------------------------------------------------------- #
+
+create_interval_string.grates_year <- function(x) {
+  "1 year"
+}
+
+# ------------------------------------------------------------------------- #
 
 create_interval_string.grates_period <- function(x) {
   n <- grates::get_n(x)
   sprintf("%d days", n)
 }
 
-create_interval_string.grates_int_period <- function(x) grates::get_n(x)
+# ------------------------------------------------------------------------- #
 
-create_interval_string.numeric <- function(x) 1
+create_interval_string.grates_int_period <- function(x) {
+  grates::get_n(x)
+}
 
-create_interval_string.Date <- function(x) "1 day"
+# ------------------------------------------------------------------------- #
+
+create_interval_string.numeric <- function(x) {
+  1
+}
+
+# ------------------------------------------------------------------------- #
+
+create_interval_string.Date <- function(x) {
+  "1 day"
+}
 
 
