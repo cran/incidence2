@@ -25,6 +25,12 @@ inci %>% regroup(c(gender, outcome))
 # drop all groups
 inci %>% regroup()
 
+## ----cumulate-----------------------------------------------------------------
+inci %>% 
+  regroup(hospital) %>% 
+  cumulate() %>% 
+  facet_plot(n_breaks = 4, nrow = 3)
+
 ## ----keep---------------------------------------------------------------------
 inci %>% keep_first(3)
 inci %>% keep_last(3)

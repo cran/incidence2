@@ -43,7 +43,7 @@ quarterly <- incidence(dat, date_index = date_of_onset, interval = "quarter")
 plot(quarterly, color = "white")
 # year
 yearly <- incidence(dat, date_index = date_of_onset, interval = "year")
-plot(yearly, color = "white", n.breaks = 2)
+plot(yearly, color = "white", n_breaks = 2)
 
 ## ----gender-------------------------------------------------------------------
 weekly_grouped <- incidence(dat, date_of_onset, interval = "week", groups = gender)
@@ -52,9 +52,9 @@ summary(weekly_grouped)
 # A singular plot
 plot(weekly_grouped, fill = gender, color = "white")
 # a multi-facet plot
-facet_plot(weekly_grouped, fill = gender, n.breaks = 5, angle = 45, color = "white")
+facet_plot(weekly_grouped, fill = gender, n_breaks = 5, angle = 45, color = "white")
 
 ## ----outcome_hospital---------------------------------------------------------
 inci <- incidence(dat, date_of_onset, interval = "week", groups = c(outcome, hospital))
-facet_plot(inci, facets = hospital, fill = outcome, nrow = 3, n.breaks = 5, angle = 45)
+facet_plot(inci, facets = hospital, fill = outcome, nrow = 3, n_breaks = 5, angle = 45)
 

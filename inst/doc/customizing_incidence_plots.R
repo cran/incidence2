@@ -34,11 +34,11 @@ plot(i, angle = 45)
 
 ## ---- epiet-------------------------------------------------------------------
 i_epiet <- incidence(dat[160:180, ], date_index = date_of_onset)
-plot(i_epiet, color = "white", show_cases = TRUE, angle = 45, size = 10, n.breaks = 20)
+plot(i_epiet, color = "white", show_cases = TRUE, angle = 45, size = 10, n_breaks = 20)
 
 ## ---- facets------------------------------------------------------------------
-facet_plot(i, facets = gender, n.breaks = 3)
-facet_plot(i, facets = hospital, fill = gender, n.breaks = 3, nrow = 4)
+facet_plot(i, facets = gender, n_breaks = 3)
+facet_plot(i, facets = hospital, fill = gender, n_breaks = 3, nrow = 4)
 ii <- regroup(i, gender)
 facet_plot(ii, facets = gender, fill = "grey", color = "white")
 
@@ -54,7 +54,7 @@ barplot(1:20, col = muted(20))
 
 ## ---- palettes----------------------------------------------------------------
 ih <- regroup(i, hospital)
-plot(ih, fill = hospital, col_pal = rainbow, n.breaks = 3) # see ?rainbow
+plot(ih, fill = hospital, col_pal = rainbow, n_breaks = 3) # see ?rainbow
 ig <- regroup(i, gender)
 plot(ig, fill = gender, col_pal = cm.colors)   # see ?cm.colors
 
