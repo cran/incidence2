@@ -1,11 +1,11 @@
 #' Regional data for COVID-19 cases in the UK
 #'
 #' A dataset containing the daily time-series of cases, tests, hospitalisations,
-#'   and deaths for UK.
+#' and deaths for UK.
 #'
-#' @note Extracted using the
-#'   [covidregionaldata](https://CRAN.R-project.org/package=covidregionaldata) package
-#'   on 2021-06-03.
+#' Extracted using the
+#' [covidregionaldata](https://CRAN.R-project.org/package=covidregionaldata)
+#' package on 2021-06-03.
 #'
 #' @format A data frame with 6370 rows and 26 variables:
 #' \describe{

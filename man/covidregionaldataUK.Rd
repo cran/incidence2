@@ -32,9 +32,9 @@ covidregionaldataUK
 A dataset containing the daily time-series of cases, tests, hospitalisations,
 and deaths for UK.
 }
-\note{
+\details{
 Extracted using the
-\href{https://CRAN.R-project.org/package=covidregionaldata}{covidregionaldata} package
-on 2021-06-03.
+\href{https://CRAN.R-project.org/package=covidregionaldata}{covidregionaldata}
+package on 2021-06-03.
 }
 \keyword{datasets}

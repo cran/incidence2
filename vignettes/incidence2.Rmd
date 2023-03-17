@@ -1,0 +1,352 @@
+---
+title: "incidence2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{incidence2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## What does it do?
+
+{incidence2} is an R package that implements functions to compute, handle
+and visualise *incidence* data. It aims to be intuitive to use for both
+interactive data exploration and as part of more robust outbreak analytic
+pipelines.
+
+The package is based around objects of the namesake class, `<incidence2>`. These
+objects are a data frame subclass with some additional invariants. That is, an
+`<incidence2>` object must:
+  
+- have one column representing the date index (this does not need to be a `date`
+  object but must have an inherent ordering over time);
+  
+- have one column representing the count variable (i.e. what is being counted)
+  and one variable representing the associated count;
+  
+- have zero or more columns representing groups;
+
+- not have duplicated rows with regards to the date and group variables.
+
+
+To create and work with `<incidence2>` objects we provide a number of functions:
+
+- `incidence()`: for the construction of incidence objects from both linelists
+  and pre-aggregated data sets.
+
+- `plot.incidence2()`: generate simple plots with reasonable defaults.
+
+- `regroup()`: regroup incidence from different groups into one global incidence
+  time series.
+  
+- `keep_first()`, `keep_last()`: keep the rows corresponding to the first (or
+  last) set of grouped dates (ordered by time) from an `<incidence>` object.
+  
+- `keep_peaks()`: keep the rows corresponding to the maximum count value for
+  each grouping of an `<incidence>` object.
+
+- `complete_dates()`: ensure every possible combination of date and groupings
+  is represented with a count.
+  
+- `cumulate()`: calculate the cumulative incidence over time.
+  
+- `print.incidence2()` and `summary.incidence2()` methods.
+
+- `as.data.frame.incidence2()` conversion method.
+
+- Accessor functions for accessing underlying variables: `get_date_index()`,
+  `get_count_variable()`, `get_count_value()`, `get_groups()`,
+  `get_count_value_name()`, `get_count_variable_name()`, `get_date_index_name()`
+  and `get_group_names()`.
+  
+## Usage
+
+The following sections give an overview of the package utilising two different
+data sets. The first of these datasets comes from the
+[{outbreaks}](https://cran.r-project.org/package=outbreaks) package and is a
+synthetic linelist generated from a simulated Ebola Virus Disease (EVD)
+outbreak. The second data set is available within {incidence2} and represents a
+pre-aggregated time-series of Covid cases, tests, hospitalisations, and deaths
+for UK regions that was obtained using the
+[{covidregionaldata}](https://CRAN.R-project.org/package=covidregionaldata)
+package (extracted on 2021-06-03).
+
+```{r}
+library(outbreaks)  # for the underlying data
+library(ggplot2)    # For custom plotting later
+library(incidence2) 
+
+ebola <- ebola_sim_clean$linelist
+str(ebola)
+covid <- covidregionaldataUK
+str(covid)
+```
+
+### Computing incidence from a linelist
+
+To compute daily incidence we pass to `incidence()` a linelist of observation
+data. This input should be in the form of a data frame and we must also pass the
+name of a variable in the data that we can use to index the input. Note that
+whilst we we refer to this index as the `date_index` there is no restriction on
+it's type, save it needing represent the relative time of an observation
+(i.e. it has an ordering).
+
+
+```{r fig.height = 5, dpi = 90}
+daily <- incidence(ebola, date_index = "date_of_onset")
+daily
+plot(daily)
+```
+
+The daily data is quite noisy, so we may want to pre group dates prior to
+calculating the incidence. One way to do this is to utilise functions from the
+[{grates}](https://www.reconverse.org/grates/dev/) package. Here we use the
+`as_isoweek()` function to convert the 'date of onset' to an isoweek (a week
+starting on a Monday) before calculating the incidence incidence:
+
+```{r}
+# isoweek incidence
+weekly_ebola <- transform(ebola, date_of_onset = as_isoweek(date_of_onset))
+inci <- incidence(weekly_ebola, date_index = "date_of_onset")
+inci
+plot(inci, border_colour = "white")
+```
+
+By grouping dates prior to calling `incidence()` it makes it clear to future
+readers of your code (including yourself) which transformations are being
+applied to your input data. This grouping, however, is such a common and useful
+operation that we have chosen to integrate much of
+[{grates}](https://www.reconverse.org/grates/dev/)
+functionality directly in to incidence2. This integration is done via an
+`interval` parameter in the `incidence()` call. This can take values:
+
+- week(s), isoweek(s) or weekly (mapping to `<grates_isoweek>`);
+- epiweek(s) (mapping to `<grates_epiweek>`);
+- month(s), yearmonth(s) or monthly (`<grates_yearmonth>`);
+- quarter(s), yearquarter(s) or quarterly (`<grates_yearquarter>`);
+- year(s) or yearly (`<grates_year>`).
+
+As an example, the following is equivalent to the `inci` output above:
+
+```{r}
+# isoweek incidence using the interval parameter
+inci2 <- incidence(ebola, date_index = "date_of_onset", interval = "isoweek")
+inci2
+
+# check equivalent
+identical(inci, inci2)
+```
+
+If we wish to aggregate by specified groups we can use the `groups` argument.
+For instance, computing incidence by gender:
+
+```{r}
+inci_by_gender <- incidence(
+    ebola,
+    date_index = "date_of_onset",
+    groups = "gender",
+    interval = "isoweek"
+)
+inci_by_gender
+```
+
+For grouped data, the plot method will create a faceted plot across groups:
+
+```{r}
+plot(inci_by_gender, border_colour = "white", angle = 45)
+```
+
+`incidence()` also supports multiple date inputs:
+```{r}
+grouped_inci <- incidence(
+    ebola,
+    date_index = c(
+        onset = "date_of_onset",
+        infection = "date_of_infection"
+    ), 
+    interval = "isoweek",
+    groups = "gender"
+)
+grouped_inci
+```
+
+When multiple date indices are given, they are used for filling the resultant
+plot:
+```{r}
+plot(grouped_inci, angle = 45, border_colour = "white")
+```
+
+### Computing incidence from pre-aggregated data
+The Covid data set is in a wide format with multiple count values given for each
+day. To convert this to long form incidence we specify similar variables to
+before but also include the count variables we are interested in:
+
+```{r}
+monthly_covid <- 
+    covid |> 
+    subset(!region %in% c("England", "Scotland", "Northern Ireland", "Wales")) |> 
+    incidence(
+        date_index = "date",
+        groups = "region",
+        counts = c("cases_new"),
+        interval = "yearmonth"
+    )
+monthly_covid
+plot(monthly_covid, nrow = 3, angle = 45, border_colour = "white")
+```
+
+### Modifying incidence objects
+
+#### `regroup()`
+Sometimes you may find you've created a grouped incidence but now want to change
+the internal grouping. Assuming you are after a subset of the grouping already
+generated, you can use `regroup()` to get the desired aggregation:
+
+```{r}
+# generate an incidence object with 3 groups
+x <- incidence(
+    ebola,
+    date_index = "date_of_onset",
+    interval = "isoweek",
+    groups = c("gender", "hospital", "outcome")
+)
+
+# regroup to just one group
+xx <- regroup(x, c("gender", "outcome"))
+xx
+
+# drop all groups
+regroup(x)
+```
+
+#### `cumulate()`
+We also provide a helper function, `cumulate`() to easily generate cumulative 
+incidences:
+
+```{r}
+y <- regroup(x, "hospital")
+y <- cumulate(y)
+y
+plot(y, angle = 45, nrow = 3)
+```
+
+### subsetting and other manipulations
+
+#### `keep_first()`, `keep_last()` and `keep_peaks()`
+
+Once your data is grouped by date, you may want to select the first or last few
+entries based on a particular date grouping using `keep_first()` and
+`keep_last()`:
+
+```{r}
+inci <- incidence(
+    ebola,
+    date_index = "date_of_onset",
+    interval = "isoweek",
+    groups = c("hospital", "gender")
+)
+
+keep_first(inci, 3)
+keep_last(inci, 3)
+```
+
+Similarly you may want to quickly view the incidence peaks:
+
+```{r}
+keep_peaks(inci)
+```
+
+#### `complete_dates()`
+
+Sometimes your incidence data does not span consecutive units of time, or
+different groupings may cover different periods. To this end we provide a
+`complete_dates()` function which ensures a complete and identical range of
+dates are given counts (by default filling with a 0 value).
+
+```{r}
+dat <- data.frame(
+    dates = as.Date(c("2020-01-01", "2020-01-04")),
+    gender = c("male", "female")
+)
+i <- incidence(dat, date_index = "dates", groups = "gender")
+i
+complete_dates(i)
+```
+
+#### preservation of class
+
+`<incidence2>` objects have been carefully constructed to preserve their
+structure under a range of different operations that can be applied to data
+frames. By this we mean that if an operation is applied to an `<incidence2>`
+object then as long as the invariants of the object are preserved (i.e. groups,
+interval and uniqueness of rows) then the object retain it's incidence class.
+If the invariants are not preserved then a `<data.frame>` will be returned
+instead.
+
+```{r subsetting}
+
+# filtering preserves class
+subset(inci, gender == "f" & hospital == "Rokupa Hospital")
+inci[c(1L, 3L, 5L), ]
+
+# Adding columns preserve class
+inci$future <- inci$date_index + 999L
+inci
+
+# rename preserve class
+names(inci)[names(inci) == "date_index"] <- "isoweek"
+inci
+
+# select returns a data frame unless all date, count and group variables are
+# preserved in the output
+str(inci[,-1L])
+inci[, -6L]
+```
+
+### Accessing variable information
+
+We provide multiple accessors to easily access information about an
+`<incidence2>` object's structure:
+
+```{r}
+# the name of the date_index variable of x
+get_date_index_name(inci)
+
+# alias for `get_date_index_name()`
+get_dates_name(inci)
+
+# the name of the count variable of x
+get_count_variable_name(inci)
+
+# the name of the count value of x
+get_count_value_name(inci)
+
+# the name(s) of the group variable(s) of x
+get_group_names(inci)
+
+# list containing date_index variable of x
+str(get_date_index(inci))
+
+# alias for get_date_index
+str(get_dates(inci))
+
+# list containing the count variable of x
+str(get_count_variable(inci))
+
+# list containing count value of x
+str(get_count_value(inci))
+
+# list of the group variable(s) of x
+str(get_groups(inci)) 
+```
+

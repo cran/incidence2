@@ -3,66 +3,58 @@
 \name{keep}
 \alias{keep}
 \alias{keep_first}
-\alias{keep_first.default}
-\alias{keep_first.incidence_df}
-\alias{keep_first.grates_yearweek}
-\alias{keep_first.grates_month}
-\alias{keep_first.grates_quarter}
-\alias{keep_first.grates_year}
-\alias{keep_first.grates_period}
 \alias{keep_last}
-\alias{keep_last.default}
-\alias{keep_last.incidence_df}
-\alias{keep_last.grates_yearweek}
-\alias{keep_last.grates_month}
-\alias{keep_last.grates_quarter}
-\alias{keep_last.grates_year}
-\alias{keep_last.grates_period}
-\title{Keep first and last occurences}
+\alias{keep_peaks}
+\title{Keep first, last and peak occurences}
 \usage{
-keep_first(x, n, ...)
+keep_first(x, n, complete_dates = TRUE, ...)
 
-\method{keep_first}{default}(x, n, ...)
+keep_last(x, n, complete_dates = TRUE, ...)
 
-\method{keep_first}{incidence_df}(x, n, ...)
-
-\method{keep_first}{grates_yearweek}(x, n, ...)
-
-\method{keep_first}{grates_month}(x, n, ...)
-
-\method{keep_first}{grates_quarter}(x, n, ...)
-
-\method{keep_first}{grates_year}(x, n, ...)
-
-\method{keep_first}{grates_period}(x, n, ...)
-
-keep_last(x, n, ...)
-
-\method{keep_last}{default}(x, n, ...)
-
-\method{keep_last}{incidence_df}(x, n, ...)
-
-\method{keep_last}{grates_yearweek}(x, n, ...)
-
-\method{keep_last}{grates_month}(x, n, ...)
-
-\method{keep_last}{grates_quarter}(x, n, ...)
-
-\method{keep_last}{grates_year}(x, n, ...)
-
-\method{keep_last}{grates_period}(x, n, ...)
+keep_peaks(x, complete_dates = TRUE, first_only = FALSE, ...)
 }
 \arguments{
-\item{x}{Object to filter.}
+\item{x}{\verb{<incidence2>} object.}
 
-\item{n}{Number of entries to keep.}
+\item{n}{\verb{[integer]}
 
-\item{...}{Not currently used.}
+Number of entries to keep.
+
+\code{double} vectors will be converted via \code{as.integer(n)}.}
+
+\item{complete_dates}{\verb{[bool]}
+
+Should \code{complete_dates()} be called on the data prior to keeping the first
+entries.
+
+Defaults to TRUE.}
+
+\item{...}{Other arguments passed to \code{complete_dates()}.}
+
+\item{first_only}{\verb{[bool]}
+
+Should only the first peak (by date) be kept.
+
+Defaults to \code{TRUE}.}
 }
 \value{
-The objected with the chosen entries.
+Incidence object with the chosen entries.
 }
 \description{
-\code{keep_first()} (\code{keep_last}) keeps the first (last) \code{n} entries to occur
-by date ordering.
+\code{keep_first()} and \code{keep_last()} keep the first and last \code{n} rows to occur
+for each grouping when in ascending date order. \code{keep_peaks()} keeps the rows
+with the maximum count value for each group.
+}
+\examples{
+
+if (requireNamespace("outbreaks", quietly = TRUE)) {
+\dontshow{withAutoprint(\{}
+    data(ebola_sim_clean, package = "outbreaks")
+    dat <- ebola_sim_clean$linelist
+    inci <- incidence(dat, "date_of_onset")
+    keep_first(inci, 3)
+    keep_last(inci, 3)
+\dontshow{\})}
+}
+
 }

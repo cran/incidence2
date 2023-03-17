@@ -2,56 +2,17 @@
 % Please edit documentation in R/plot.R
 \name{plot.incidence2}
 \alias{plot.incidence2}
-\alias{facet_plot}
-\alias{facet_plot.incidence2}
-\title{Plotting functions}
+\title{Plot an incidence object}
 \usage{
 \method{plot}{incidence2}(
   x,
-  count = NULL,
-  fill = NULL,
-  centre_dates = TRUE,
-  date_format = "\%Y-\%m-\%d",
-  stack = TRUE,
-  title = NULL,
-  col_pal = vibrant,
-  alpha = 0.7,
-  color = NA,
-  xlab = "",
-  ylab = NULL,
-  n_breaks = 6,
+  y,
   width = 1,
-  show_cases = FALSE,
-  border = "white",
-  na_color = "grey",
-  legend = c("right", "left", "bottom", "top", "none"),
-  angle = 0,
-  size = NULL,
-  ...
-)
-
-facet_plot(x, ...)
-
-\method{facet_plot}{incidence2}(
-  x,
-  count = NULL,
-  facets = NULL,
-  centre_dates = TRUE,
-  date_format = "\%Y-\%m-\%d",
-  stack = TRUE,
-  fill = NULL,
-  title = NULL,
-  col_pal = vibrant,
+  colour_palette = vibrant,
+  border_colour = NA,
+  na_colour = "grey",
   alpha = 0.7,
-  color = NA,
-  xlab = "",
-  ylab = NULL,
-  n_breaks = 3,
-  width = 1,
-  show_cases = FALSE,
-  border = "white",
-  na_color = "grey",
-  legend = c("bottom", "top", "left", "right", "none"),
+  title = NULL,
   angle = 0,
   size = NULL,
   nrow = NULL,
@@ -59,87 +20,78 @@ facet_plot(x, ...)
 )
 }
 \arguments{
-\item{x}{An \code{\link[=incidence]{incidence()}} object.}
+\item{x}{\verb{<incidence2>} object.}
 
-\item{count}{Which count variable to have on the y-axis. If NULL (default)
-the first entry returned from \code{get_count_names(x)} is used.}
+\item{y}{Not used.
 
-\item{fill}{Which variable to color plots by. If NULL no distinction if made
-for plot colors.}
+Required for compatibility with the \code{plot()} generic.}
 
-\item{centre_dates}{If the interval is one of a single week, month, quarter
-or year the x_axis labels are centred with custom category labels. Set this
-option to FALSE to use date labels at the breaks.}
+\item{width}{\verb{[numeric]}
 
-\item{date_format}{Format to use if "Date" scales are required. The value is
-used by \code{format.Date()} and can be any input acceptable by that function
-(defaults to "\%Y-\%m-\%d).}
+Value between 0 and 1 indicating the relative size of the bars to the
+interval.
 
-\item{stack}{A logical indicating if bars of multiple groups should be
-stacked, or displayed side-by-side. Only used if fill is not NULL.}
+Default 1.}
 
-\item{title}{Optional title for the graph.}
+\item{colour_palette}{\verb{[function]}
 
-\item{col_pal}{col_pal The color palette to be used for the groups; defaults
-to \code{vibrant} (see \code{?palettes}).}
+The color palette to be used for the different count variables.
 
-\item{alpha}{The alpha level for color transparency, with 1 being fully
-opaque and 0 fully transparent; defaults to 0.7.}
+Defaults to \code{vibrant} (see \code{?palettes}).}
 
-\item{color}{The color to be used for the borders of the bars; NA for
-invisible borders; defaults to NA.}
+\item{border_colour}{\verb{[character]}
 
-\item{xlab}{The label to be used for the x-axis; empty by default.}
+The color to be used for the borders of the bars.
 
-\item{ylab}{The label to be used for the y-axis; by default, a label will be
-generated automatically according to the time interval used in incidence
-computation.}
+Use \code{NA} (default) for invisible borders.}
 
-\item{n_breaks}{Approximate number of breaks calculated using
-\code{scales::breaks_pretty} (default 6).}
+\item{na_colour}{\verb{[character]}
 
-\item{width}{Value between 0 and 1 indicating the relative size of the bars
-to the interval. Default 1.}
+The colour to plot \code{NA} values in graphs.
 
-\item{show_cases}{if \code{TRUE} (default: \code{FALSE}), then each observation will be
-colored by a border. The border defaults to a white border unless specified
-otherwise. This is normally used outbreaks with a small number of cases.
-Note: this can only be used if \code{stack = TRUE}}
+Defaults to \code{grey}.}
 
-\item{border}{If show_cases is TRUE this represents the color used for the
-borders of the individual squares plotted (defaults to \code{"white"}).}
+\item{alpha}{\verb{[numeric]}
 
-\item{na_color}{The colour to plot \code{NA} values in graphs (default: \code{grey}).}
+The alpha level for color transparency, with 1 being fully opaque and
+0 fully transparent
 
-\item{legend}{Position of legend in plot.}
+Defaults to 0.7.}
 
-\item{angle}{Rotation angle for text.}
+\item{title}{\verb{[character]}
 
-\item{size}{text size in pts.}
+Optional title for the graph.}
 
-\item{...}{other arguments to pass to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_x_continuous()}}.}
+\item{angle}{\verb{[numeric]}
 
-\item{facets}{Which variable to facet plots by.  If NULL will use all
-group_labels of the incidence object.}
+Rotation angle for text.}
 
-\item{nrow}{Number of rows.}
+\item{size}{\verb{[numeric]}
+
+text size in pts.}
+
+\item{nrow}{\verb{[integer]}
+
+Number of rows used for facetting if there are group variables present and
+just one count in the incidence object.}
+
+\item{...}{Not currently used.}
 }
 \value{
 \itemize{
-\item \code{facet_plot()} and \code{plot()} generate a \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object.
+\item A \verb{[ggplot2::ggplot()]} object.
 }
 }
 \description{
-incidence2 includes two plotting functions to simplify graph creation.
+\code{plot()} can be used to provide a quick bar plot of an incidence object.
 }
 \details{
 \itemize{
-\item \code{plot} creates a one-pane graph of an incidence object.
-\item \code{facet_plot} creates a multi-facet graph of a grouped incidence object.
-If the object has no groups it returns the same output as a call to
-\code{\link[=plot]{plot()}}.
-\item If the \code{\link[=incidence]{incidence()}} object has a rolling average column then that
-average will be overlaid on top.
+\item Facetting will occur automatically if either grouping variables or
+multiple counts are present.
+\item If there are multiple count variables, each count will occupy a different
+row of the resulting plot.
+\item Utilises ggplot2 so this must be installed to use.
 }
 }
 \examples{
@@ -148,24 +100,12 @@ if (requireNamespace("outbreaks", quietly = TRUE) && requireNamespace("ggplot2",
     data(ebola_sim_clean, package = "outbreaks")
     dat <- ebola_sim_clean$linelist
 
-    inci <- incidence(dat,
-                      date_index = date_of_onset,
-                      interval = 7,
-                      groups = hospital)
+    inci <- incidence(dat, date_index = "date_of_onset", groups = "hospital")
+    plot(inci, angle = 45)
 
-    inci2 <- incidence(dat,
-                      date_index = date_of_onset,
-                      interval = 7,
-                      groups = c(hospital, gender))
-
-    plot(inci)
-    plot(inci, fill = hospital)
-    plot(inci, fill = hospital, stack = FALSE)
-
-    facet_plot(inci)
-    facet_plot(inci2)
-    facet_plot(inci2, facets = gender)
-    facet_plot(inci2, facets = hospital, fill = gender)
+    inci2 <- regroup(inci)
+    plot(inci2)
   })
 }
+
 }

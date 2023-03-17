@@ -1,14 +1,12 @@
 Package: incidence2
 Type: Package
 Title: Compute, Handle and Plot Incidence of Dated Events
-Version: 1.2.3
+Version: 2.0.0
 Authors@R: c(
-  person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
-         comment = c(ORCID = "0000-0002-8587-7113")),
-  person("Thibaut", "Jombart", role = "ctb", email = "thibautjombart@gmail.com"),
-  person("Zhian N.", "Kamvar", role = "ctb", email = "zkamvar@gmail.com",
-         comment = c(ORCID = "0000-0003-1458-7108"))
-  )
+    person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
+           comment = c(ORCID = "0000-0002-8587-7113")),
+    person("Thibaut", "Jombart", role = "ctb", email = "thibautjombart@gmail.com")
+    )   
 Description: Provides functions and classes to compute, handle and visualise 
   incidence from dated events for a defined time interval. Dates can be 
   provided in various standard formats. The class 'incidence2' is used to store
@@ -19,20 +17,18 @@ Encoding: UTF-8
 License: MIT + file LICENSE
 URL: https://github.com/reconverse/incidence2
 BugReports: https://github.com/reconverse/incidence2/issues
-RoxygenNote: 7.1.2
-LazyData: true
-Imports: tibble, ellipsis, vctrs, pillar, data.table, stats, rlang (>=
-        0.1.2), tidyselect, grates (>= 0.3.0), dplyr, clock
-Suggests: outbreaks, knitr, rmarkdown, testthat, scales, roxygen2,
-        ggplot2, magrittr, covr, zoo
+Depends: grates (>= 1.0.0), R (>= 3.5.0)
+Imports: grDevices, data.table, pillar, utils
+RoxygenNote: 7.2.3
+Suggests: outbreaks, dplyr, ggplot2, knitr, rmarkdown, rlang, clock,
+        testthat (>= 3.0.0), tibble
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Depends: R (>= 2.10)
+LazyData: true
 NeedsCompilation: no
-Packaged: 2021-11-07 21:37:30 UTC; tim
+Packaged: 2023-03-17 14:29:22 UTC; tim
 Author: Tim Taylor [aut, cre] (<https://orcid.org/0000-0002-8587-7113>),
-  Thibaut Jombart [ctb],
-  Zhian N. Kamvar [ctb] (<https://orcid.org/0000-0003-1458-7108>)
+  Thibaut Jombart [ctb]
 Maintainer: Tim Taylor <tim.taylor@hiddenelephants.co.uk>
 Repository: CRAN
-Date/Publication: 2021-11-07 22:00:02 UTC
+Date/Publication: 2023-03-17 15:00:02 UTC
