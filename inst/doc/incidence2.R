@@ -48,6 +48,7 @@ inci_by_gender
 
 ## -----------------------------------------------------------------------------
 plot(inci_by_gender, border_colour = "white", angle = 45)
+plot(inci_by_gender, border_colour = "white", angle = 45, fill = "gender")
 
 ## -----------------------------------------------------------------------------
 grouped_inci <- incidence(
@@ -63,6 +64,7 @@ grouped_inci
 
 ## -----------------------------------------------------------------------------
 plot(grouped_inci, angle = 45, border_colour = "white")
+plot(grouped_inci, angle = 45, border_colour = "white", fill = "count_variable")
 
 ## -----------------------------------------------------------------------------
 monthly_covid <- 
@@ -76,6 +78,19 @@ monthly_covid <-
     )
 monthly_covid
 plot(monthly_covid, nrow = 3, angle = 45, border_colour = "white")
+
+## ---- fig.height=3------------------------------------------------------------
+dat <- ebola[160:180, ]
+i_epiet <- incidence(dat, date_index = "date_of_onset", date_names_to = "date")
+plot(i_epiet, color = "white", show_cases = TRUE, angle = 45, n_breaks = 10)
+i_epiet2 <- incidence(
+    dat, date_index = "date_of_onset",
+    groups = "gender", date_names_to = "date"
+)
+plot(
+    i_epiet2, show_cases = TRUE,
+    color = "white", angle = 45, n_breaks = 10, fill = "gender"
+)
 
 ## -----------------------------------------------------------------------------
 # generate an incidence object with 3 groups

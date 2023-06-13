@@ -1,7 +1,7 @@
 Package: incidence2
 Type: Package
 Title: Compute, Handle and Plot Incidence of Dated Events
-Version: 2.1.0
+Version: 2.2.1
 Authors@R: c(
     person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
            comment = c(ORCID = "0000-0002-8587-7113")),
@@ -20,15 +20,15 @@ BugReports: https://github.com/reconverse/incidence2/issues
 Depends: grates (>= 1.0.0), R (>= 3.5.0)
 Imports: grDevices, data.table, pillar, utils
 RoxygenNote: 7.2.3
-Suggests: outbreaks, dplyr, ggplot2, knitr, rmarkdown, rlang, clock,
-        testthat (>= 3.0.0), tibble
+Suggests: outbreaks, dplyr, ggplot2, scales, knitr, rmarkdown, rlang,
+        clock, testthat (>= 3.0.0), tibble
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LazyData: true
 NeedsCompilation: no
-Packaged: 2023-05-30 21:54:27 UTC; tim
+Packaged: 2023-06-13 08:30:02 UTC; tim
 Author: Tim Taylor [aut, cre] (<https://orcid.org/0000-0002-8587-7113>),
   Thibaut Jombart [ctb]
 Maintainer: Tim Taylor <tim.taylor@hiddenelephants.co.uk>
 Repository: CRAN
-Date/Publication: 2023-05-30 23:10:02 UTC
+Date/Publication: 2023-06-13 08:50:06 UTC

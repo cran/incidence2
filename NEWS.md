@@ -1,3 +1,11 @@
+# incidence2 2.2.1
+
+## New features
+
+* `plot.incidence2()` gains arguments `n_breaks`, `fill`, `show_cases` and
+  `legend` allowing for a wider range of plot styles. See
+  `vignette("incidence2", package = "incidence2")` for examples.
+
 # incidence2 2.1.0
 
 ## New features
@@ -9,7 +17,7 @@
 
 ## (minor) breaking changes
 
-* `incidence()` will now warn if objects are created with POSIXct columns.
+* `incidence()` will now warn if objects are created with <POSIXct> columns.
   The motivation for this is that, internally, <POSIXct> objects are represented
   as seconds since the UNIX epoch and, in our experience, this level of
   granularity is not normally desired for aggregation.
