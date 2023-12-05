@@ -125,15 +125,30 @@ Defaults to \code{FALSE}.}
 \description{
 \code{plot()} can be used to provide a bar plot of an incidence object. Due
 to the complexities with automating plotting it is some what experimental in
-nature and we recommend calling {ggplot2} but this function is often
-sufficient for generating a quick visualisation of an \verb{<incidence2>} object.
+nature and it may be better to use ggplot2 directly.
 }
 \details{
 \itemize{
-\item Facetting will occur automatically if either grouping variables or
+\item Faceting will occur automatically if either grouping variables or
 multiple counts are present.
 \item If there are multiple count variables, each count will occupy a different
 row of the resulting plot.
 \item Utilises ggplot2 so this must be installed to use.
 }
+}
+\examples{
+\dontshow{data.table::setDTthreads(2)}
+if (requireNamespace("outbreaks", quietly = TRUE) && requireNamespace("ggplot2", quietly = TRUE)) {
+  withAutoprint({
+    data(ebola_sim_clean, package = "outbreaks")
+    dat <- ebola_sim_clean$linelist
+
+    inci <- incidence(dat, date_index = "date_of_onset", groups = "hospital")
+    plot(inci, angle = 45)
+
+    inci2 <- regroup(inci)
+    plot(inci2)
+  })
+}
+
 }

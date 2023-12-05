@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,6 +6,7 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5
 )
+data.table::setDTthreads(2)
 
 ## -----------------------------------------------------------------------------
 library(outbreaks)  # for the underlying data
@@ -79,7 +80,7 @@ monthly_covid <-
 monthly_covid
 plot(monthly_covid, nrow = 3, angle = 45, border_colour = "white")
 
-## ---- fig.height=3------------------------------------------------------------
+## ----fig.height=3-------------------------------------------------------------
 dat <- ebola[160:180, ]
 i_epiet <- incidence(dat, date_index = "date_of_onset", date_names_to = "date")
 plot(i_epiet, color = "white", show_cases = TRUE, angle = 45, n_breaks = 10)

@@ -1,7 +1,7 @@
 Package: incidence2
 Type: Package
 Title: Compute, Handle and Plot Incidence of Dated Events
-Version: 2.2.1
+Version: 2.2.3
 Authors@R: c(
     person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
            comment = c(ORCID = "0000-0002-8587-7113")),
@@ -15,7 +15,8 @@ Description: Provides functions and classes to compute, handle and visualise
   toolkit for outbreak analysis (<https://www.reconverse.org>).
 Encoding: UTF-8
 License: MIT + file LICENSE
-URL: https://github.com/reconverse/incidence2
+URL: https://www.reconverse.org/incidence2/,
+        https://github.com/reconverse/incidence2
 BugReports: https://github.com/reconverse/incidence2/issues
 Depends: grates (>= 1.0.0), R (>= 3.5.0)
 Imports: grDevices, data.table, pillar, utils
@@ -26,9 +27,9 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 LazyData: true
 NeedsCompilation: no
-Packaged: 2023-06-13 08:30:02 UTC; tim
+Packaged: 2023-12-05 12:16:32 UTC; tim
 Author: Tim Taylor [aut, cre] (<https://orcid.org/0000-0002-8587-7113>),
   Thibaut Jombart [ctb]
 Maintainer: Tim Taylor <tim.taylor@hiddenelephants.co.uk>
 Repository: CRAN
-Date/Publication: 2023-06-13 08:50:06 UTC
+Date/Publication: 2023-12-05 13:30:02 UTC

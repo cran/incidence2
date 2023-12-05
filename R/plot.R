@@ -3,11 +3,10 @@
 # -------------------------------------------------------------------------
 #' `plot()` can be used to provide a bar plot of an incidence object. Due
 #' to the complexities with automating plotting it is some what experimental in
-#' nature and we recommend calling {ggplot2} but this function is often
-#' sufficient for generating a quick visualisation of an `<incidence2>` object.
+#' nature and it may be better to use ggplot2 directly.
 #'
 # -------------------------------------------------------------------------
-#' - Facetting will occur automatically if either grouping variables or
+#' - Faceting will occur automatically if either grouping variables or
 #'   multiple counts are present.
 #'
 #' - If there are multiple count variables, each count will occupy a different
@@ -112,6 +111,22 @@
 # -------------------------------------------------------------------------
 #' @return
 #'  - A `[ggplot2::ggplot()]` object.
+#'
+# -------------------------------------------------------------------------
+#' @examples
+#' \dontshow{data.table::setDTthreads(2)}
+#' if (requireNamespace("outbreaks", quietly = TRUE) && requireNamespace("ggplot2", quietly = TRUE)) {
+#'   withAutoprint({
+#'     data(ebola_sim_clean, package = "outbreaks")
+#'     dat <- ebola_sim_clean$linelist
+#'
+#'     inci <- incidence(dat, date_index = "date_of_onset", groups = "hospital")
+#'     plot(inci, angle = 45)
+#'
+#'     inci2 <- regroup(inci)
+#'     plot(inci2)
+#'   })
+#' }
 #'
 # -------------------------------------------------------------------------
 #' @export
@@ -271,12 +286,21 @@ plot.incidence2 <- function(
                 breaks = scales::breaks_pretty(n  = n_breaks),
                 date_labels = "%Y-%m-%d"
             )
+    } else if (inherits(dates, "grates_period")) {
+        n <- grates::get_n(dates)
+        offset <- grates::get_offset(dates)
+        out <- out +
+            grates::scale_x_grates_period(
+                n.breaks = n_breaks,
+                n = n,
+                offset = offset
+            )
     } else {
         scale_fun <- .grates_scale(dates)
         out <-  out + scale_fun(n.breaks = n_breaks)
     }
 
-    # conditional facetting
+    # conditional faceting
     luc <- length(unique(counts)) > 1L
     lg <- length(group_vars)
 
@@ -325,8 +349,3 @@ plot.incidence2 <- function(
     # return plot
     out
 }
-
-
-
-
-
