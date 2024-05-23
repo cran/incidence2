@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 #' @param x `<incidence2>` object.
 #'
-#' @param expand `[logical]`
+#' @param expand `logical`.
 #'
 #' Should a range of dates from the minimum to maximum value of the date index
 #' also be created.
@@ -16,28 +16,28 @@
 #' dates.
 #'
 #'
-#' @param by `[Defunct]`
+#' @param by `Defunct`.
 #'
 #' Ignored.
 #'
-#' @param fill `[numeric]`
+#' @param fill `numeric`.
 #'
 #' The value to replace missing counts by.
 #'
 #' Defaults to `0L`.
 #'
-#' @param allow_POSIXct `[logical]`
+#' @param allow_POSIXct `logical`.
 #'
 #' Should this function work with POSIXct dates?
 #'
 #' Defaults to `FALSE`.
 # -------------------------------------------------------------------------
 #' @return
-#' An `<incidence2>` object.
+#' An [incidence2][incidence2::incidence] object.
 #'
 # -------------------------------------------------------------------------
 #' @examples
-#' \dontshow{data.table::setDTthreads(2)}
+#' \dontshow{.old <- data.table::setDTthreads(2)}
 #' x <- data.frame(
 #'     dates = Sys.Date() + c(1,3,4),
 #'     groups = c("grp1","grp2", "grp1"),
@@ -46,6 +46,7 @@
 #'
 #' i <- incidence(x, date_index = "dates", groups = "groups", counts = "counts")
 #' complete_dates(i)
+#' \dontshow{data.table::setDTthreads(.old)}
 #'
 # -------------------------------------------------------------------------
 #' @export
@@ -61,6 +62,7 @@ complete_dates <- function(
         stopf("`%s` is not an 'incidence2' object", deparse(substitute(x)))
 
     .assert_bool(expand)
+    .assert_bool(allow_POSIXct)
 
     if (length(fill) != 1L)
         stopf("`fill` must be of lenth 1.")

@@ -9,7 +9,7 @@ complete_dates(x, expand = TRUE, fill = 0L, by = 1L, allow_POSIXct = FALSE)
 \arguments{
 \item{x}{\verb{<incidence2>} object.}
 
-\item{expand}{\verb{[logical]}
+\item{expand}{\code{logical}.
 
 Should a range of dates from the minimum to maximum value of the date index
 also be created.
@@ -18,31 +18,31 @@ If \code{expand} is TRUE (default) then complete_dates will attempt to use
 \code{function(x) seq(min(x), max(x), by = 1)} to generate a complete sequence of
 dates.}
 
-\item{fill}{\verb{[numeric]}
+\item{fill}{\code{numeric}.
 
 The value to replace missing counts by.
 
 Defaults to \code{0L}.}
 
-\item{by}{\verb{[Defunct]}
+\item{by}{\code{Defunct}.
 
 Ignored.}
 
-\item{allow_POSIXct}{\verb{[logical]}
+\item{allow_POSIXct}{\code{logical}.
 
 Should this function work with POSIXct dates?
 
 Defaults to \code{FALSE}.}
 }
 \value{
-An \verb{<incidence2>} object.
+An \link[=incidence]{incidence2} object.
 }
 \description{
 This function ensures that an incidence object has the same range of dates
 for each grouping. By default missing counts will be filled with \code{0L}.
 }
 \examples{
-\dontshow{data.table::setDTthreads(2)}
+\dontshow{.old <- data.table::setDTthreads(2)}
 x <- data.frame(
     dates = Sys.Date() + c(1,3,4),
     groups = c("grp1","grp2", "grp1"),
@@ -51,5 +51,6 @@ x <- data.frame(
 
 i <- incidence(x, date_index = "dates", groups = "groups", counts = "counts")
 complete_dates(i)
+\dontshow{data.table::setDTthreads(.old)}
 
 }

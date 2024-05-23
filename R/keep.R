@@ -2,25 +2,26 @@
 #'
 #' `keep_first()` and `keep_last()` keep the first and last `n` rows to occur
 #' for each grouping when in ascending date order. `keep_peaks()` keeps the rows
-#' with the maximum count value for each group.
+#' with the maximum count value for each group. `first_peak()` is a convenience
+#' wrapper around `keep_peaks()` with the `first_only` argument set to `TRUE`.
 #'
 # -------------------------------------------------------------------------
-#' @param x `<incidence2>` object.
+#' @param x [incidence2][incidence2::incidence] object.
 #'
-#' @param n `[integer]`
+#' @param n `integer`.
 #'
 #' Number of entries to keep.
 #'
 #' `double` vectors will be converted via `as.integer(n)`.
 #'
-#' @param complete_dates `[bool]`
+#' @param complete_dates `bool`.
 #'
 #' Should `complete_dates()` be called on the data prior to keeping the first
 #' entries.
 #'
 #' Defaults to TRUE.
 #'
-#' @param first_only `[bool]`
+#' @param first_only `bool`.
 #'
 #' Should only the first peak (by date) be kept.
 #'
@@ -32,20 +33,19 @@
 #'
 # -------------------------------------------------------------------------
 #' @return
-#' Incidence object with the chosen entries.
+#' [incidence2][incidence2::incidence] object with the chosen entries.
 #'
 # -------------------------------------------------------------------------
 #' @examples
-#' \dontshow{data.table::setDTthreads(2)}
+#' \dontshow{.old <- data.table::setDTthreads(2)}
 #' if (requireNamespace("outbreaks", quietly = TRUE)) {
-#' \dontshow{withAutoprint(\{}
 #'     data(ebola_sim_clean, package = "outbreaks")
 #'     dat <- ebola_sim_clean$linelist
 #'     inci <- incidence(dat, "date_of_onset")
 #'     keep_first(inci, 3)
 #'     keep_last(inci, 3)
-#' \dontshow{\})}
 #' }
+#' \dontshow{data.table::setDTthreads(.old)}
 #'
 # -------------------------------------------------------------------------
 #' @name keep
@@ -85,7 +85,7 @@ keep_first <- function(x, n, complete_dates = TRUE, ...) {
     setorderv(tmp, get_date_index_name.incidence2(x), order = 1L)
 
     # pull out n entries for each group
-    tmp <- tmp[, list(tmp___index = head(tmp___index, n)), by = c(count_var, groups)]
+    tmp <- tmp[, list(tmp___index = utils::head(tmp___index, n)), by = c(count_var, groups)]
     idx <- tmp$tmp___index
 
     # index input
@@ -126,7 +126,7 @@ keep_last <- function(x, n, complete_dates = TRUE, ...) {
     setorderv(tmp, get_date_index_name.incidence2(x))
 
     # pull out n entries for each group
-    tmp <- tmp[, list(tmp___index = tail(tmp___index, n)), by = c(count_var, groups)]
+    tmp <- tmp[, list(tmp___index = utils::tail(tmp___index, n)), by = c(count_var, groups)]
     idx <- tmp$tmp___index
 
     # index input
@@ -182,3 +182,8 @@ keep_peaks <- function(x, complete_dates = TRUE, first_only = FALSE, ...) {
     x[idx, ]
 }
 
+#' @rdname keep
+#' @export
+first_peak <- function(x, complete_dates = TRUE, ...) {
+    keep_peaks(x = x, complete_dates = complete_dates, first_only = TRUE, ...)
+}

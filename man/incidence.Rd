@@ -15,46 +15,51 @@ incidence(
   rm_na_dates = TRUE,
   interval = NULL,
   offset = NULL,
+  complete_dates = FALSE,
   ...
 )
 }
 \arguments{
 \item{x}{A data frame object representing a linelist or pre-aggregated dataset.}
 
-\item{date_index}{\verb{[character]}
+\item{date_index}{\code{character}.
 
 The time index(es) of the given data.
 
 This should be the name(s) corresponding to the desired date column(s) in x.
 
-A name vector can be used for convenient relabelling of the resultant output.
+A named vector can be used for convenient relabelling of the resultant output.
 
 Multiple indices only make sense when  \code{x} is a linelist.}
 
-\item{groups}{\verb{[character]}
+\item{groups}{\code{character}.
 
 An optional vector giving the names of the groups of observations for which
-incidence should be grouped.}
+incidence should be grouped.
 
-\item{counts}{\verb{[character]}
+A named vector can be used for convenient relabelling of the resultant output.}
+
+\item{counts}{\code{character}.
 
 The count variables of the given data.  If NULL (default) the data is taken
-to be a linelist of individual observations.}
+to be a linelist of individual observations.
 
-\item{count_names_to}{\verb{[character]}
+A named vector can be used for convenient relabelling of the resultant output.}
+
+\item{count_names_to}{\code{character}.
 
 The column to create which will store the \code{counts} column names provided that
 \code{counts} is not NULL.}
 
-\item{count_values_to}{\verb{[character]}
+\item{count_values_to}{\code{character}.
 
 The name of the column to store the resultant count values in.}
 
-\item{date_names_to}{\verb{[character]}
+\item{date_names_to}{\code{character}.
 
 The name of the column to store the date variables in.}
 
-\item{rm_na_dates}{\verb{[logical]}
+\item{rm_na_dates}{\code{bool}.
 
 Should \code{NA} dates be removed prior to aggregation?}
 
@@ -93,18 +98,30 @@ counting periods from relative to the Unix Epoch:
 (\code{offset <- floor(as.numeric(offset))}) and then scaled via \code{n} as above.
 }}
 
+\item{complete_dates}{\code{bool}.
+
+Should the resulting object have the same range of dates for each grouping.
+
+Missing counts will be filled with \code{0L}.
+
+Will attempt to use \code{function(x) seq(min(x), max(x), by = 1)} on the
+resultant date_index column to generate a complete sequence of dates.
+
+More flexible completion is possible by using the \code{complete_dates()}
+function.}
+
 \item{...}{Not currently used.}
 }
 \value{
-An object of class \verb{<incidence2, data.frame>}.
+A \code{\link[tibble:tibble]{tibble}} with subclass \code{incidence2}.
 }
 \description{
-\code{incidence()} calculates event the \emph{incidence} of different events across
-specified time periods and groupings.
+\code{incidence()} calculates the \emph{incidence} of different events across specified
+time periods and groupings.
 }
 \details{
-\verb{<incidence2>} objects are a sub class of data frame with some
-additional invariants. That is, an \verb{<incidence2>} object must:
+\code{incidence2} objects are a sub class of data frame with some
+additional invariants. That is, an \code{incidence2} object must:
 \itemize{
 \item have one column representing the date index (this does not need to be a
 \code{date} object but must have an inherent ordering over time);
@@ -138,17 +155,20 @@ calling \code{incidence()}.
 }
 
 \examples{
-\dontshow{data.table::setDTthreads(2)}
+\dontshow{.old <- data.table::setDTthreads(2)}
 if (requireNamespace("outbreaks", quietly = TRUE)) {
-\dontshow{withAutoprint(\{}
     data(ebola_sim_clean, package = "outbreaks")
     dat <- ebola_sim_clean$linelist
     incidence(dat, "date_of_onset")
     incidence(dat, "date_of_onset", groups = c("gender", "hospital"))
-\dontshow{\})}
 }
+\dontshow{data.table::setDTthreads(.old)}
 
 }
 \seealso{
-\code{browseVignettes("grates")} for more details on the grate object classes.
+\itemize{
+\item \code{browseVignettes("grates")} for more details on the grate object classes.
+\item \code{incidence_()} for a version supporting
+\link[dplyr:dplyr_tidy_select]{tidy-select} semantics in some arguments.
+}
 }

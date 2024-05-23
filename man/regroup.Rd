@@ -9,7 +9,7 @@ regroup(x, groups = NULL)
 \arguments{
 \item{x}{\verb{<incidence2>} object.}
 
-\item{groups}{\verb{[character]}
+\item{groups}{\code{character}.
 
 The groups to sum over.
 
@@ -17,14 +17,13 @@ If \code{NULL} (default) then the function returns the corresponding object with
 no groupings.}
 }
 \description{
-This function regroups an \verb{<incidence2>} object across the specified groups.
-The resulting \verb{<incidence2>} object will contains counts summed over the
-groups present in the input.
+This function regroups an \link[=incidence]{incidence2} object across
+the specified groups. The resulting \link[=incidence]{incidence2}
+object will contains counts aggregated over the specified groups.
 }
 \examples{
-\dontshow{data.table::setDTthreads(2)}
+\dontshow{.old <- data.table::setDTthreads(2)}
 if (requireNamespace("outbreaks", quietly = TRUE)) {
-\dontshow{withAutoprint(\{}
     data(ebola_sim_clean, package = "outbreaks")
     dat <- ebola_sim_clean$linelist
     i <- incidence(
@@ -34,7 +33,10 @@ if (requireNamespace("outbreaks", quietly = TRUE)) {
     )
     regroup(i)
     regroup(i, "hospital")
-\dontshow{\})}
 }
+\dontshow{data.table::setDTthreads(.old)}
 
+}
+\seealso{
+\code{regroup_()} for a version supporting
 }

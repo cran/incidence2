@@ -1,4 +1,5 @@
 test_that("operations preserve class as expected", {
+
     # outbreaks required for all tests
     skip_if_not_installed("outbreaks")
 
@@ -15,9 +16,6 @@ test_that("operations preserve class as expected", {
 
     # selecting all columns
     expect_s3_class(inci[], "incidence2")
-
-    # dplyr required from here onwards
-    skip_if_not_installed("dplyr")
 
     # dplyr operations preserve class
     x <- dplyr::filter(inci, gender == "f", hospital == "Rokupa Hospital")
@@ -73,9 +71,6 @@ test_that("operations drop class as expected", {
     # operations that drop class
     expect_false(inherits(inci[1:3], "incidence2"))
 
-    # dplyr required from here onwards
-    skip_if_not_installed("dplyr")
-
     x <- dplyr::select(inci, date_index, count)
     expect_false(inherits(x, "incidence2"))
 
@@ -90,8 +85,8 @@ test_that("operations drop class as expected", {
 
     # Adding duplicate rows drops class
     x <-
-        inci %>%
-        dplyr::slice_head(n = 1) %>%
+        inci |>
+        dplyr::slice_head(n = 1) |>
         dplyr::bind_rows(inci)
     expect_false(inherits(x, "incidence2"))
 })

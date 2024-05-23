@@ -7,14 +7,22 @@ test_that("incidence with no groupings and no intervals works", {
 
     # no groupings and no counts
     x <- incidence(dat, date_index = "date")
-    expect_s3_class(x, c("incidence2", "data.frame"), exact = TRUE)
+    expect_s3_class(
+        x,
+        c("incidence2", class(tibble::new_tibble(mtcars))),
+        exact = TRUE
+    )
     expect_equal(nrow(x), 731L)
     expect_true(all(x$count == 2L))
     expect_equal(x$date_index, dates)
 
     # no groupings but with count
     x <- incidence(dat, date_index = "date", counts = "count")
-    expect_s3_class(x, c("incidence2", "data.frame"), exact = TRUE)
+    expect_s3_class(
+        x,
+        c("incidence2", class(tibble::new_tibble(mtcars))),
+        exact = TRUE
+    )
     expect_equal(nrow(x), 731L)
     expect_equal(sum(x$count == 2L), 366L)
     expect_equal(sum(x$count == 4L), 365L)
@@ -395,7 +403,12 @@ test_that("10 incidence with no groupings but with a count works", {
 
 
 test_that("miscellaneous incidence error messaging works as expected", {
-    dat <- data.frame(dates = Sys.Date() + 1:10, count = 1:10)
+    dat <- data.frame(
+        dates = Sys.Date() + 1:10,
+        count = 1:10,
+        dates2 = Sys.Date() + 11:20
+    )
+
     expect_error(
         incidence("bob"),
         "`x` must be a data frame.",
@@ -440,8 +453,14 @@ test_that("miscellaneous incidence error messaging works as expected", {
     )
 
     expect_error(
-        incidence(dat, date_index = c("dates", "dates"), counts = "count"),
+        incidence(dat, date_index = c("dates", "dates2"), counts = "count"),
         "If `counts` is specified `date_index` must be of length 1.",
+        fixed = TRUE
+    )
+
+    expect_error(
+        incidence(dat, date_index = c("dates", "dates"), counts = "count"),
+        "`date_index` values must be unique.",
         fixed = TRUE
     )
 
