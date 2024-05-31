@@ -1,8 +1,14 @@
-stopf <- function(fmt, ..., .use_call = TRUE, .call = sys.call(-1L)) {
-    .call <- if (isTRUE(.use_call)) .call[1L] else NULL
+.stopf_argument <- function(fmt, ..., .call = sys.call(-1L)) {
     msg <- sprintf(fmt, ...)
-    err <- simpleError(msg, .call)
-    stop(err)
+    stop(errorCondition(msg, class = error_types$argument, call = .call[1L]))
+}
+
+.stop_argument <- function(msg, .call = sys.call(-1L)) {
+    stop(errorCondition(msg, class = error_types$argument, call = .call[1L]))
+}
+
+.stop_suggested <- function(msg, .call = sys.call(-1L)) {
+    stop(errorCondition(msg, class = error_types$suggested, call = .call[1L]))
 }
 
 warnf <- function(fmt, ..., .use_call = TRUE, .call = sys.call(-1L)) {
