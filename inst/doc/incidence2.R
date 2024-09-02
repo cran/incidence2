@@ -16,7 +16,7 @@ str(ebola)
 ## -----------------------------------------------------------------------------
 (daily_incidence <- incidence(ebola, date_index = "date_of_onset"))
 
-## ----fig.height = 5, dpi = 90-------------------------------------------------
+## -----------------------------------------------------------------------------
 plot(daily_incidence)
 
 ## -----------------------------------------------------------------------------
@@ -41,6 +41,8 @@ identical(dat, weekly_incidence)
 
 ## -----------------------------------------------------------------------------
 plot(weekly_incidence_gender, border_colour = "white", angle = 45)
+
+## -----------------------------------------------------------------------------
 plot(weekly_incidence_gender, border_colour = "white", angle = 45, fill = "gender")
 
 ## -----------------------------------------------------------------------------
@@ -59,6 +61,8 @@ summary(weekly_multi_dates)
 
 ## -----------------------------------------------------------------------------
 plot(weekly_multi_dates, angle = 45, border_colour = "white")
+
+## -----------------------------------------------------------------------------
 plot(weekly_multi_dates, angle = 45, border_colour = "white", fill = "count_variable")
 
 ## -----------------------------------------------------------------------------
@@ -90,22 +94,24 @@ monthly_covid
      ))
 plot(monthly_covid, nrow = 3, angle = 45, border_colour = "white")
 
-## ----fig.height=3-------------------------------------------------------------
+## -----------------------------------------------------------------------------
 dat <- ebola[160:180, ]
 
-incidence(
+(small <- incidence(
     dat,
     date_index = "date_of_onset",
     date_names_to = "date"
-) |> 
-plot(color = "white", show_cases = TRUE, angle = 45, n_breaks = 10)
-incidence(
+))
+plot(small, show_cases = TRUE, angle = 45, n_breaks = 10)
+
+## -----------------------------------------------------------------------------
+(small_gender <- incidence(
     dat,
     date_index = "date_of_onset",
     groups = "gender",
     date_names_to = "date"
-) |> 
-plot(show_cases = TRUE, color = "white", angle = 45, n_breaks = 10, fill = "gender")
+)) 
+plot(small_gender, show_cases = TRUE, angle = 45, n_breaks = 10, fill = "gender")
 
 ## -----------------------------------------------------------------------------
 # generate an incidence object with 3 groups
@@ -154,11 +160,11 @@ influenza <- incidence_(
 
 # across provinces (we suspend progress bar for markdown)
 estimate_peak(influenza, progress = FALSE) |> 
-    subset(select = -count_variable)
+    select(-count_variable)
 # regrouping for overall peak
 plot(regroup(influenza))
 estimate_peak(regroup(influenza), progress = FALSE) |> 
-    subset(select = -count_variable)
+    select(-count_variable)
 # return the first peak of the grouped and ungrouped data
 first_peak(influenza)
 first_peak(regroup(influenza))
@@ -226,6 +232,54 @@ str(get_count_variable(weekly_incidence))
 str(get_count_value(weekly_incidence))
 # list of the group variable(s) of x
 str(get_groups(weekly_incidence))
+
+## -----------------------------------------------------------------------------
+# first twenty weeks of the ebola data set across hospitals
+dat <- incidence_(ebola, date_of_onset, groups = hospital, interval = "isoweek")
+dat <- keep_first(dat, 20L)
+
+# fit a poisson model to the grouped data
+(fitted <-
+    dat |>
+    nest(.key = "data") |>
+    mutate(
+        model  = lapply(
+            data,
+            function(x) glm(count ~ date_index, data = x, family = poisson)
+        )
+    ))
+# Add confidence intervals to the result
+(intervals <-
+    fitted |>
+    mutate(result = Map(
+        function(data, model) {
+            data |>
+                ciTools::add_ci(
+                    model,
+                    alpha = 0.05,
+                    names = c("lower_ci", "upper_ci")
+                ) |>
+                as_tibble()
+        },
+        data,
+        model
+    )) |>
+    select(hospital, result) |>
+    unnest(result))
+# plot
+plot(dat, angle = 45) +
+    ggplot2::geom_line(
+        ggplot2::aes(date_index, y = pred),
+        data = intervals,
+        inherit.aes = FALSE
+    ) +
+    ggplot2::geom_ribbon(
+        ggplot2::aes(date_index, ymin = lower_ci, ymax = upper_ci),
+        alpha = 0.2,
+        data = intervals,
+        inherit.aes = FALSE,
+        fill = "#BBB67E"
+    )
 
 ## -----------------------------------------------------------------------------
 weekly_incidence |>

@@ -50,9 +50,9 @@
 bootstrap_incidence <- function(x, randomise_groups = FALSE) {
 
     if (!inherits(x, "incidence2"))
-        .stopf_argument("`%s` is not an 'incidence2' object", deparse(substitute(x)))
+        .stopf("`%s` is not an 'incidence2' object.", deparse(substitute(x)))
 
-    .assert_bool(randomise_groups)
+    assert_bool(randomise_groups)
 
     # prepare to restore attributes later
     row.names(x) <- NULL
@@ -76,7 +76,7 @@ bootstrap_incidence <- function(x, randomise_groups = FALSE) {
 
     # convert back to data frame
     setDF(out)
-    old$names <- names(out)
+    old[["names"]] <- names(out)
 
     # restore attributes and return
     attributes(out) <- old

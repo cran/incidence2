@@ -59,23 +59,22 @@ complete_dates <- function(
 ) {
 
     if (!inherits(x, "incidence2"))
-        .stopf_argument("`%s` is not an 'incidence2' object", deparse(substitute(x)))
+        .stopf("`%s` is not an 'incidence2' object.", deparse(substitute(x)))
 
-    .assert_bool(expand)
-    .assert_bool(allow_POSIXct)
+    assert_bool(expand)
+    assert_bool(allow_POSIXct)
 
     if (length(fill) != 1L)
-        .stopf_argument("`fill` must be of lenth 1.")
+        .stopf("`fill` must be of lenth 1.")
 
     date_variable <- get_date_index_name.incidence2(x)
     dates <- get_date_index.incidence2(x)
 
     # Note the following was motivated by
     # https://github.com/reconverse/incidence2/issues/104
-    .assert_bool(allow_POSIXct)
     if (inherits(dates, "POSIXct") && !allow_POSIXct) {
         # TODO - Do we want/need a different error condition here?
-        .stop_argument(paste0(
+        .stop(
             "<POSIXct> date_index columns detected. Internally <POSIXct> objects ",
             "are represented as seconds since the UNIX epoch and calling ",
             "`complete_dates()` on an object of granularity can lead to ",
@@ -85,11 +84,16 @@ complete_dates <- function(
             "<incidence> object using <Dates> for daily incidence. This can be done ",
             "prior to calling `incidence()` or, alternatively, by setting the ",
             "argument `interval = 'day'` within the call itself."
-        ))
+        )
     }
 
-    if (by != 1)
-        .stopf_argument("`by` argument is now Defunct. Setting `by = 1L` or `by = 1` is permitted for compatibility only.")
+    if (by != 1) {
+        .stop(
+            "`by` argument is now Defunct. ",
+            "Setting `by = 1L` or `by = 1` is permitted for compatibility only."
+        )
+    }
+
 
     # TODO - catch this and give better / combined error message
     if (expand)
@@ -108,11 +112,18 @@ complete_dates <- function(
 
     dat <- do.call(CJ, groups)
     out <- as.data.table(x)
-    out <- as.data.frame(merge(dat, out, by = c(date_variable, group_variables, count_variable), all.x = TRUE))
+    out <- as.data.frame(
+        merge(
+            dat,
+            out,
+            by = c(date_variable, group_variables, count_variable),
+            all.x = TRUE
+        )
+    )
 
     tmp <- .set_row_names(nrow(out))
     attributes(out) <- attributes(x)
-    attr(out,"row.names") <- tmp
+    attr(out, "row.names") <- tmp
     setnafill(out, fill = fill, cols = get_count_value_name.incidence2(x))
     out
 }

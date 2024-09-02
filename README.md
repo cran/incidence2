@@ -4,7 +4,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/incidence2)](https://CRAN.R-project.org/package=incidence2)
 [![R-CMD-check](https://github.com/reconverse/incidence2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/reconverse/incidence2/actions/workflows/R-CMD-check.yaml)
-[![](https://raw.githubusercontent.com/reconverse/reconverse.github.io/master/images/badge-stable.svg)](https://www.reconverse.org/lifecycle.html#stable)
+[![lifecycle-stable](https://raw.githubusercontent.com/reconverse/reconverse.github.io/master/images/badge-stable.svg)](https://www.reconverse.org/lifecycle.html#stable)
 <!-- badges: end -->
 
 # incidence2
@@ -19,8 +19,8 @@ objects.
 
 ## Installing the package
 
-You can install the released version of incidence2 from
-[CRAN](https://cran.r-project.org/) with:
+You can install the incidence2 from [CRAN](https://cran.r-project.org/)
+with:
 
 ``` r
 install.packages("incidence2")
