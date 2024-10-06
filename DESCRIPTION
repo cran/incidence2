@@ -1,7 +1,7 @@
 Package: incidence2
 Type: Package
 Title: Compute, Handle and Plot Incidence of Dated Events
-Version: 2.4.0
+Version: 2.5.0
 Authors@R: c(
     person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
            comment = c(ORCID = "0000-0002-8587-7113")),
@@ -28,9 +28,9 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 LazyData: true
 NeedsCompilation: no
-Packaged: 2024-09-02 09:37:52 UTC; tim
+Packaged: 2024-10-06 18:38:13 UTC; tim
 Author: Tim Taylor [aut, cre] (<https://orcid.org/0000-0002-8587-7113>),
   Thibaut Jombart [ctb]
 Maintainer: Tim Taylor <tim.taylor@hiddenelephants.co.uk>
 Repository: CRAN
-Date/Publication: 2024-09-02 11:50:02 UTC
+Date/Publication: 2024-10-06 19:50:02 UTC

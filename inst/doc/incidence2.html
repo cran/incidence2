@@ -880,17 +880,17 @@ estimate_peak(influenza, progress = FALSE) |&gt;
 #&gt;    &lt;fct&gt;     &lt;date&gt;                 &lt;int&gt; &lt;list&gt;          &lt;date&gt;     &lt;date&gt;    
 #&gt;  1 Anhui     2013-03-09                 1 &lt;df [100 × 1]&gt;  2013-03-09 2013-03-28
 #&gt;  2 Beijing   2013-04-11                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-04-11
-#&gt;  3 Fujian    2013-04-17                 1 &lt;df [100 × 1]&gt;  2013-04-17 2013-04-21
+#&gt;  3 Fujian    2013-04-17                 1 &lt;df [100 × 1]&gt;  2013-04-17 2013-04-18
 #&gt;  4 Guangdong 2013-07-27                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-07-27
 #&gt;  5 Hebei     2013-07-10                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-07-10
-#&gt;  6 Henan     2013-04-06                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-04-06
+#&gt;  6 Henan     2013-04-06                 1 &lt;df [100 × 1]&gt;  2013-04-06 2013-04-08
 #&gt;  7 Hunan     2013-04-14                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-04-14
-#&gt;  8 Jiangsu   2013-03-19                 2 &lt;df [100 × 1]&gt;  2013-03-08 2013-03-21
+#&gt;  8 Jiangsu   2013-03-19                 2 &lt;df [100 × 1]&gt;  2013-03-08 2013-03-20
 #&gt;  9 Jiangxi   2013-04-15                 1 &lt;df [100 × 1]&gt;  2013-04-15 2013-04-19
 #&gt; 10 Shandong  2013-04-16                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-04-16
-#&gt; 11 Shanghai  2013-04-01                 4 &lt;df [100 × 1]&gt;  2013-03-27 2013-04-01
+#&gt; 11 Shanghai  2013-04-01                 4 &lt;df [100 × 1]&gt;  2013-03-17 2013-04-01
 #&gt; 12 Taiwan    2013-04-12                 1 &lt;df [100 × 1]&gt;  2013-02-19 2013-04-12
-#&gt; 13 Zhejiang  2013-04-06                 5 &lt;df [100 × 1]&gt;  2013-03-29 2013-04-10
+#&gt; 13 Zhejiang  2013-04-06                 5 &lt;df [100 × 1]&gt;  2013-03-29 2013-04-08
 #&gt; # ℹ 1 more variable: upper_ci &lt;date&gt;
 # regrouping for overall peak
 plot(regroup(influenza))
@@ -938,16 +938,16 @@ bootstrap_incidence(influenza)
 #&gt; # groups:     province
 #&gt;    date_index province count_variable count
 #&gt;  * &lt;date&gt;     &lt;fct&gt;    &lt;chr&gt;          &lt;int&gt;
-#&gt;  1 2013-02-19 Shanghai date_of_onset      1
+#&gt;  1 2013-02-19 Shanghai date_of_onset      0
 #&gt;  2 2013-02-27 Shanghai date_of_onset      1
-#&gt;  3 2013-03-07 Zhejiang date_of_onset      3
-#&gt;  4 2013-03-08 Jiangsu  date_of_onset      1
-#&gt;  5 2013-03-09 Anhui    date_of_onset      0
-#&gt;  6 2013-03-13 Zhejiang date_of_onset      1
+#&gt;  3 2013-03-07 Zhejiang date_of_onset      1
+#&gt;  4 2013-03-08 Jiangsu  date_of_onset      0
+#&gt;  5 2013-03-09 Anhui    date_of_onset      1
+#&gt;  6 2013-03-13 Zhejiang date_of_onset      0
 #&gt;  7 2013-03-17 Shanghai date_of_onset      0
-#&gt;  8 2013-03-19 Jiangsu  date_of_onset      0
-#&gt;  9 2013-03-20 Jiangsu  date_of_onset      3
-#&gt; 10 2013-03-21 Jiangsu  date_of_onset      0
+#&gt;  8 2013-03-19 Jiangsu  date_of_onset      4
+#&gt;  9 2013-03-20 Jiangsu  date_of_onset      2
+#&gt; 10 2013-03-21 Jiangsu  date_of_onset      3
 #&gt; # ℹ 74 more rows
 </code></pre>
 <h3 id="cumulate"><span class="section-number">5.5</span> <code>cumulate()</code></h3>
@@ -1052,15 +1052,15 @@ str(weekly_incidence)
 #&gt;  - attr(*, &quot;count_value&quot;)= chr &quot;count&quot;
 #&gt;  - attr(*, &quot;groups&quot;)= chr [1:2] &quot;gender&quot; &quot;hospital&quot;
 
-# select returns a data frame unless all date, count and group variables are
+# select returns a tibble unless all date, count and group variables are
 # preserved in the output
 str(weekly_incidence[,-1L])
-#&gt; 'data.frame':	496 obs. of  5 variables:
+#&gt; tibble [496 × 5] (S3: tbl_df/tbl/data.frame)
 #&gt;  $ gender        : Factor w/ 2 levels &quot;f&quot;,&quot;m&quot;: 1 2 1 2 1 1 1 1 1 1 ...
 #&gt;  $ hospital      : Factor w/ 5 levels &quot;Connaught Hospital&quot;,..: 2 1 3 3 1 4 5 1 2 4 ...
-#&gt;  $ count_variable: chr  &quot;date_of_onset&quot; &quot;date_of_onset&quot; &quot;date_of_onset&quot; &quot;date_of_onset&quot; ...
-#&gt;  $ count         : int  1 1 2 1 1 1 1 2 5 1 ...
-#&gt;  $ future        : 'grates_isoweek' int  2033-W22 2033-W23 2033-W24 2033-W24 2033-W25 2033-W25 2033-W25 2033-W26 2033-W26 2033-W26 ...
+#&gt;  $ count_variable: chr [1:496] &quot;date_of_onset&quot; &quot;date_of_onset&quot; &quot;date_of_onset&quot; &quot;date_of_onset&quot; ...
+#&gt;  $ count         : int [1:496] 1 1 2 1 1 1 1 2 5 1 ...
+#&gt;  $ future        : 'grates_isoweek' int [1:496] 2033-W22 2033-W23 2033-W24 2033-W24 2033-W25 2033-W25 2033-W25 2033-W26 2033-W26 2033-W26 ...
 str(weekly_incidence[, -6L])
 #&gt; incidnc2 [496 × 5] (S3: incidence2/tbl_df/tbl/data.frame)
 #&gt;  $ isoweek       : 'grates_isoweek' int [1:496] 2014-W15 2014-W16 2014-W17 2014-W17 2014-W18 2014-W18 2014-W18 2014-W19 2014-W19 2014-W19 ...
@@ -1075,7 +1075,7 @@ str(weekly_incidence[, -6L])
 
 # duplicating rows will drop the class but only if duplicate rows
 class(rbind(weekly_incidence, weekly_incidence))
-#&gt; [1] &quot;data.frame&quot;
+#&gt; [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;
 class(rbind(weekly_incidence[1:5, ], weekly_incidence[6:10, ]))
 #&gt; [1] &quot;incidence2&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;
 </code></pre>
