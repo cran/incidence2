@@ -1,37 +1,26 @@
-## ----include = FALSE----------------------------------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.align = "center"
-)
 data.table::setDTthreads(2)
+litedown::reactor(error = TRUE, message = TRUE, print = NA, fig.dim = c(8, 5))
 
-## -----------------------------------------------------------------------------
 library(incidence2)
 
 # linelist from the simulated ebola outbreak  (removing some missing entries)
 ebola <- subset(outbreaks::ebola_sim_clean$linelist ,!is.na(hospital))
 str(ebola)
 
-## -----------------------------------------------------------------------------
 (daily_incidence <- incidence(ebola, date_index = "date_of_onset"))
 
-## -----------------------------------------------------------------------------
 plot(daily_incidence)
 
-## -----------------------------------------------------------------------------
 (weekly_incidence <- 
     ebola |>
     mutate(date_of_onset = as_isoweek(date_of_onset)) |> 
     incidence(date_index = "date_of_onset"))
 plot(weekly_incidence, border_colour = "white")
 
-## -----------------------------------------------------------------------------
 (dat <- incidence(ebola, date_index = "date_of_onset", interval = "isoweek"))
 # check equivalent
 identical(dat, weekly_incidence)
 
-## -----------------------------------------------------------------------------
 (weekly_incidence_gender <- incidence(
     ebola,
     date_index = "date_of_onset",
@@ -39,13 +28,10 @@ identical(dat, weekly_incidence)
     interval = "isoweek"
 ))
 
-## -----------------------------------------------------------------------------
 plot(weekly_incidence_gender, border_colour = "white", angle = 45)
 
-## -----------------------------------------------------------------------------
 plot(weekly_incidence_gender, border_colour = "white", angle = 45, fill = "gender")
 
-## -----------------------------------------------------------------------------
 (weekly_multi_dates <- incidence(
     ebola,
     date_index = c(
@@ -56,23 +42,18 @@ plot(weekly_incidence_gender, border_colour = "white", angle = 45, fill = "gende
     groups = "gender"
 ))
 
-## -----------------------------------------------------------------------------
 summary(weekly_multi_dates)
 
-## -----------------------------------------------------------------------------
 plot(weekly_multi_dates, angle = 45, border_colour = "white")
 
-## -----------------------------------------------------------------------------
 plot(weekly_multi_dates, angle = 45, border_colour = "white", fill = "count_variable")
 
-## -----------------------------------------------------------------------------
 covid <- subset(
     covidregionaldataUK,
     !region %in% c("England", "Scotland", "Northern Ireland", "Wales")
 )
 str(covid)
 
-## -----------------------------------------------------------------------------
 monthly_covid <- incidence(
     covid,
     date_index = "date",
@@ -82,7 +63,6 @@ monthly_covid <- incidence(
 )
 monthly_covid
 
-## -----------------------------------------------------------------------------
 (monthly_covid <-
      covid |>
      tidyr::replace_na(list(cases_new = 0)) |> 
@@ -94,7 +74,6 @@ monthly_covid
      ))
 plot(monthly_covid, nrow = 3, angle = 45, border_colour = "white")
 
-## -----------------------------------------------------------------------------
 dat <- ebola[160:180, ]
 
 (small <- incidence(
@@ -104,7 +83,6 @@ dat <- ebola[160:180, ]
 ))
 plot(small, show_cases = TRUE, angle = 45, n_breaks = 10)
 
-## -----------------------------------------------------------------------------
 (small_gender <- incidence(
     dat,
     date_index = "date_of_onset",
@@ -113,7 +91,6 @@ plot(small, show_cases = TRUE, angle = 45, n_breaks = 10)
 )) 
 plot(small_gender, show_cases = TRUE, angle = 45, n_breaks = 10, fill = "gender")
 
-## -----------------------------------------------------------------------------
 # generate an incidence object with 3 groups
 (x <- incidence_(
     ebola,
@@ -128,7 +105,6 @@ regroup(x, c("gender", "outcome"))
 # drop all groups
 regroup(x)
 
-## -----------------------------------------------------------------------------
 dat <- data.frame(
     dates = as.Date(c("2020-01-01", "2020-01-04")),
     gender = c("male", "female")
@@ -137,7 +113,6 @@ dat <- data.frame(
 (incidence <- incidence_(dat, date_index = dates, groups = gender))
 complete_dates(incidence)
 
-## -----------------------------------------------------------------------------
 weekly_incidence <- incidence_(
     ebola,
     date_index = date_of_onset,
@@ -148,10 +123,8 @@ weekly_incidence <- incidence_(
 keep_first(weekly_incidence, 3)
 keep_last(weekly_incidence, 3)
 
-## -----------------------------------------------------------------------------
 keep_peaks(weekly_incidence)
 
-## -----------------------------------------------------------------------------
 influenza <- incidence_(
     outbreaks::fluH7N9_china_2013,
     date_index = date_of_onset,
@@ -171,11 +144,9 @@ first_peak(regroup(influenza))
 # bootstrap a single sample
 bootstrap_incidence(influenza)
 
-## -----------------------------------------------------------------------------
 (y <- cumulate(weekly_incidence))
 plot(y, angle = 45, nrow = 3)
 
-## -----------------------------------------------------------------------------
 # create a weekly incidence object
 weekly_incidence <- incidence_(
     ebola,
@@ -211,7 +182,6 @@ str(weekly_incidence[, -6L])
 class(rbind(weekly_incidence, weekly_incidence))
 class(rbind(weekly_incidence[1:5, ], weekly_incidence[6:10, ]))
 
-## -----------------------------------------------------------------------------
 # the name of the date_index variable of x
 get_date_index_name(weekly_incidence)
 # alias for `get_date_index_name()`
@@ -233,7 +203,6 @@ str(get_count_value(weekly_incidence))
 # list of the group variable(s) of x
 str(get_groups(weekly_incidence))
 
-## -----------------------------------------------------------------------------
 # first twenty weeks of the ebola data set across hospitals
 dat <- incidence_(ebola, date_of_onset, groups = hospital, interval = "isoweek")
 dat <- keep_first(dat, 20L)
@@ -281,7 +250,6 @@ plot(dat, angle = 45) +
         fill = "#BBB67E"
     )
 
-## -----------------------------------------------------------------------------
 weekly_incidence |>
     regroup_(hospital) |> 
     mutate(rolling_average = data.table::frollmean(count, n = 3L, align = "right")) |> 
