@@ -1,3 +1,13 @@
+# incidence2 2.6.2
+
+- Error and warning conditions thrown by incidence2 now have classes
+  `incidence2_error` and `incidence2_warning` respectively.
+
+- Where `Dates` are used for `date_index` inputs without specification of an
+  `interval` argument, they are checked for 'wholeness' and a warning given
+  if any fractional parts are present. Motivated by discussion with @avallecam
+  and @joshwlambert over in https://github.com/reconhub/incidence/issues/134.
+
 # incidence2 2.6.1
 
 - No functional changes, only:
@@ -158,7 +168,7 @@
   passed to an underlying `seq` function when, in practice, it should always
   have been forced to 1 to match the precision of the underlying date_index.
 
-- `complete_dates()` will now error if called on an input with a <POSIXct>
+- `complete_dates()` will now error if called on an input with a `POSIXct`
   date_index. Users must now explicitly set the argument `allow_POSIXct = TRUE`
   to maintain old behaviour.
 
