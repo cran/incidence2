@@ -1,7 +1,7 @@
 Package: incidence2
 Type: Package
 Title: Compute, Handle and Plot Incidence of Dated Events
-Version: 2.6.2
+Version: 2.6.3
 Authors@R: c(
     person("Tim", "Taylor", role = c("aut", "cre"), email = "tim.taylor@hiddenelephants.co.uk",
            comment = c(ORCID = "0000-0002-8587-7113")),
@@ -24,12 +24,15 @@ RoxygenNote: 7.3.2
 Suggests: outbreaks, ggplot2, scales, litedown, testthat (>= 3.0.0),
         ciTools, withr
 VignetteBuilder: litedown
+Config/testthat/load-all: list(export_all = FALSE, helpers = FALSE)
 Config/testthat/edition: 3
+Config/testthat/parallel: true
+Config/testthat/start-first: plot, incidence, bootstrap
 LazyData: true
 NeedsCompilation: no
-Packaged: 2025-04-14 13:47:10 UTC; tim
-Author: Tim Taylor [aut, cre] (<https://orcid.org/0000-0002-8587-7113>),
+Packaged: 2025-06-04 13:25:13 UTC; tim
+Author: Tim Taylor [aut, cre] (ORCID: <https://orcid.org/0000-0002-8587-7113>),
   Thibaut Jombart [ctb]
 Maintainer: Tim Taylor <tim.taylor@hiddenelephants.co.uk>
 Repository: CRAN
-Date/Publication: 2025-04-14 14:10:07 UTC
+Date/Publication: 2025-06-04 14:00:02 UTC
